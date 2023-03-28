@@ -16,27 +16,30 @@ Sommersemester 2023
 - A user interface must be implemented
 - The seating chart is created according to the number of rows and columns entered by the user
 - A seat is assigned when a student ID is entered
+- a seat cannot be assigned with a student ID twice
 - The student ID and the assigned seat is saved in a logfile
 - The direct neighbours of a student can be recalled
 - The indirect neighbours of a student can be recalled
-
-
-## Non-functional requirements:
-
-- The program is written in C
-- The source code contains detailed documentation in German or English
 - Logfiles are saved in a user defined path
 - Logfiles contain the current time and date
 - Logfiles are saved in a common file format
 - Logfiles need to be accessible even after the program is closed
 - Data in a source file can not be changed after each use (read only)
+- The program must compile and run on the predefined system (lecturer PC)
+- The biggest room has a maximum of 20 rows x 20 columns without taking social distancing in account respectively 400 persons.
+
+## Non-functional requirements:
 
 
-## Constraints:
+- The source code contains detailed documentation in German or English
 
+
+
+## Constraints (quality criteria):
+
+- The program is written in C
 - The program should be finished and handed in at the given deadline
 - No additional costs should arise when using the program 
-- The program must compile and run on the predefined system (lecturer PC)
 - A student ID can not be entered twice in the same session
 
 
