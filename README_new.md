@@ -1,5 +1,7 @@
-# projekt-gruppe19
-projekt-gruppe19 created by GitHub Classroom
+# Projekt Gruppe 19
+Hardwarenahe Softwareentwicklung 2
+
+Sommersemester 2023
 # Members
 - Markus Genner (ic22b039)
 - Laszlo Magocsi (ic22x001)
