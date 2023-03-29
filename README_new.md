@@ -125,7 +125,7 @@ each other.
 
 As a professor, I want to be able to view a list of all indirect neighbors of a particular student.
 
-###Test cases:
+### Test cases:
 
 - TEST CASE: Displaying the indirect neighbours
   - GIVEN: the professor must be able to query the indirect neighbours of a specific student
