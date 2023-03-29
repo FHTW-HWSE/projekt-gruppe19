@@ -38,7 +38,7 @@ Sommersemester 2023
 ## Constraints (quality criteria):
 
 - The program is written in C
-- The program should be finished and handed in at the given deadline
+- The program should be finished and handed in at the given deadline of 13.06.2023
 - No additional costs should arise when using the program 
 - A student ID can not be entered twice in the same session
 
