@@ -30,8 +30,15 @@ Sommersemester 2023
 
 ## Non-functional requirements:
 
+- Performance: The program must run quickly and efficiently.
+- Scalability: The program should be able to handle a large number of requests. It should be able to scale up or down based on the demand. Maximum set as per functionals 400 persons 20x20.
+- Reliability: The program should be reliable and able to handle errors or failures gracefully. It should be able to recover from errors and ensure that all allocated seats are properly assigned, and the same student ID cannot be entered twice.
+- Security: The program should ensure the security and privacy of the data. It should have proper access controls and authentication mechanisms to prevent unauthorized access or manipulation of the data.
+- Usability: The program should be easy to use and user-friendly. The interface should be intuitive and simple, allowing users to navigate quickly and easily. The source code contains detailed documentation in German or English.
+- Maintainability: The program should be easy to maintain and update. The code should be modular, well-documented, and designed to be easily modified or extended. (Use of GitHub)
+- Compatibility: The program should be compatible with Linux and Windows.
+- Availability: The program should be available 24/7 with minimal downtime or disruptions. It should have a robust backup and disaster recovery plan to ensure that it can quickly recover from any outages or failures. (GitHub)
 
-- The source code contains detailed documentation in German or English
 
 
 
