@@ -52,19 +52,6 @@ Sommersemester 2023
 
 # User stories and acceptance criteria
 
-### **User Story 1**
-
-As a student, I want to be able to input my student ID and be assigned a seat in the classroom, so that I can know where to sit during 
-in-person exams and feel safe in my designated seat.
-
-### Acceptance criteria US1
-
--	The program must allow students to input their student ID and receive an assigned seat.
--	The assigned seat must be recorded and saved in the system.
--	The assigned seat must be displayed on the seating chart.
--	The assigned seat should be taking any social distancing requirements into account.
-
-
 ## **User Story: Generating seating chart**
 
 As a professor, I want to be able to input the dimensions of the classroom and select a seating arrangement pattern, so that I can generate
@@ -107,23 +94,10 @@ a seating chart that ensures social distancing.
   - WHEN: the seating arrangement patterns is generated in the program
   - THEN: the program displays the seating chart generated from the given count of rows and columns and based on the selected seating arrangement pattern
 
-
-### User Story 3
-
-As a professor, I want to be able to view the names of direct neighbors during an exam, so that I can easily identify who is sitting next to 
-each other.
-
-### Acceptance criteria US3
-
--	The program must allow professors to view the names of direct neighbors during an exam.
--	The names of the direct neighbors must be displayed on the seating chart for easy reference.
--	The program must allow professors to input a student's name or ID and generate a list of their direct neighbors.
--	The program must ensure that the names of the direct neighbors are accurate and up-to-date.
-
-
 ## **User Story: Indirect neighbours**
 
 As a professor, I want to be able to view a list of all indirect neighbors of a particular student.
+
 
 ### Test cases:
 
@@ -136,3 +110,45 @@ As a professor, I want to be able to view a list of all indirect neighbors of a 
   - GIVEN: the program should handle if information the indirect neighbours of a non-examinated students are queried
   - WHEN: the professor enters a student name or ID not existing in the current exam's database
   - THEN: the program gives back and error message and lists the examinated students
+
+## **User Story: Direct neighbours**
+
+As a professor, I want to be able to view a list of all direct neighbors of a particular student.
+
+### Test cases:
+
+- TEST CASE: Neighbors are checkable
+  - GIVEN: a Professor wants to See the direct neighbors of a student
+  - WHEN: the Student ID is entered into the system
+  - THEN: a list of direct and indirect neighbors is Put out
+
+- TEST CASE: Student not found
+  - GIVEN: the program should handle if information the indirect neighbours of a non-examinated students are queried
+  - WHEN: the professor enters a student name or ID not existing in the current exam's database
+  - THEN: the program gives back and error message and lists the examinated students
+
+## **User Story: Seat Assignment**
+
+As a professor, I want to be able to assign a specific seat for every student.
+
+### Test cases:
+
+- Test Case: Seat assignment
+  - GIVEN: a Professor wants to assign a Seat to a student
+  - WHEN: the Student ID is entered
+  - THEN: a Seat is assigned
+
+- Test Case: Student ID already assigned
+  - GIVEN: a Professor wants to assign a Seat
+  - WHEN: the Student is already present
+  - THEN: an Error Message will be Put out
+
+## **User Story: Social distancing**
+
+As a professor i want to ensure that the social distancing regulations are taken into account when assigning a seat.
+
+- Test Case: Social Distacing Norms upheld
+  - GIVEN: a Professor wants to assign a Seat
+  - WHEN: the social distancing guidelines are not met because the room is already full
+  - THEN: an error message will be put out informing the professor that with the current number of people new ones can not be added
+ 
