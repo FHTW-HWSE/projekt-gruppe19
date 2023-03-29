@@ -16,7 +16,7 @@ Sommersemester 2023
 - A user interface must be implemented
 - The seating chart is created according to the number of rows and columns entered by the user
 - A seat is assigned when a student ID is entered
-- a seat cannot be assigned with a student ID twice
+- A seat cannot be assigned with a student ID twice
 - The student ID and the assigned seat is saved in a logfile
 - The direct neighbours of a student can be recalled
 - The indirect neighbours of a student can be recalled
