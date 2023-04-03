@@ -1,6 +1,6 @@
 # Tasks
 
-### Menu - Alexander
+## Menu - Alexander
 
 - Create seating chart
   - Return to menu
@@ -23,7 +23,7 @@
 - Exit program
 
 
-### Creation of seating chart - Jakob 
+## Creation of seating chart - Jakob 
 
 - Takes rows and columns
 
@@ -34,7 +34,7 @@
   - far spaced
 
 
-### Seat assignment - Laszlo
+## Seat assignment - Laszlo
 
 - Takes student ID
 
@@ -45,7 +45,7 @@
 - Outputs seat number
 
 
-### Logfile - Markus
+## Logfile - Markus
 
 - Record Student ID
 
