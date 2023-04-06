@@ -16,6 +16,7 @@
 - Set path for logfile
     - Return to menu
     - show current path
+    - if no path is given - user must enter path before creating seating chart
 
 - Recall logfile (read only)
   - Return to menu
