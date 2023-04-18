@@ -10,7 +10,7 @@ typedef struct lisD
 {
     static int value = 0;
     char studentID[9];
-    int seatNumber;
+    static int seatNumber;
     int row;
     int column;
     struct linD *nE;
@@ -19,12 +19,22 @@ typedef struct lisD
 lisD *fE = NULL;
 lisD *lE = NULL;
 
-void createSeatingChart(void)
+void main(void)
 {
     lisD seatingChart;
 }
 
 void lisD_Add(lisD *list, char *studentID, int seatNumber, int row, int column)
 {
-    strcpy(list.studentID, scanf());
+    lisD *newE, *currentE;
+    currentE = fE;
+    newE = (lisD *) malloc(sizeof(lisD));
+    
+    if(!fE)
+    {
+        newE.nE = NULL;
+        fE = newE;
+        lE = newE;
+        printf("first");
+    }
 }
