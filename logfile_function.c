@@ -1,7 +1,7 @@
 void logFile(const char *log_pfad, char place_ID, char student_ID, char assignment_status ){
 
     char write_time[20];
-    char add_remove;
+    char add_or_remove;
 
     add_remove = assignment_status;
 
@@ -12,7 +12,7 @@ void logFile(const char *log_pfad, char place_ID, char student_ID, char assignme
 		return;
 	}
 
-    if (add_remove == NULL) {
+    if (add_or_remove == NULL) {
 
         fprintf(file, "%c %s\n", write_time, place_ID, student_ID);
     }
@@ -65,4 +65,4 @@ void time_function(){
 	fclose(file);
 }
 */
-5
+2
