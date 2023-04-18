@@ -64,5 +64,3 @@ void time_function(){
 
 	fclose(file);
 }
-
-Git Upload
