@@ -12,7 +12,7 @@ void logFile(const char *log_pfad, char data){
 }
 
 
-void time_track(const char *time_pfad, char *data) {
+void time_track(const char *time_pfad, char *data, char StudID) {
 
 	time_t current_time = time(NULL);
 	struct tm *time_info = localtime(&current_time);
