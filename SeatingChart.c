@@ -1,12 +1,9 @@
-#include <stdio.h>
 typedef struct chartstruct {
     char seatingChart[20][20];
 } chartstruct;
 chartstruct seatingchart (int rows, int cols, int numStudents);
 
-int main(void) {
-    
-}
+
 chartstruct seatingchart (int rows, int cols, int numStudents) {
     chartstruct chart;
     int maxSeats = rows * cols;
