@@ -12,7 +12,7 @@ void logFile(const char *log_pfad, char data){
 }
 
 
-void time_track(const char *time_pfad, char *place_ID, char StudID) {
+void time_track(const char *time_pfad, char *place_ID, char Stud_ID) {
 
 	time_t current_time = time(NULL);
 	struct tm *time_info = localtime(&current_time);
@@ -25,7 +25,7 @@ void time_track(const char *time_pfad, char *place_ID, char StudID) {
 		return;
 	}
 
-	fprintf(file, "Um: %s\nWurde der Platz %s an den Studenten mit der StudentID %s vergeben.\n\n", time_string, place_ID, StudID);
+	fprintf(file, "Um: %s\nWurde der Platz %s an den Studenten mit der StudentID %s vergeben.\n\n", time_string, place_ID, Stud_ID);
 
 	fclose(file);
 }
