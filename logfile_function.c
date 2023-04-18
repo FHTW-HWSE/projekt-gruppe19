@@ -65,3 +65,4 @@ void time_function(){
 	fclose(file);
 }
 */
+2
