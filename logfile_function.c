@@ -21,13 +21,11 @@ void time_track(const char *time_pfad, char *data) {
 
 	FILE *file = fopen(time_pfad, "a");
 	if (file == NULL) {
-		fprintf(stderr, "Fehler, die Datei konnte nicht geöffnet werden %s\n",
-				time_pfad);
+		fprintf(stderr, "Fehler, die Datei konnte nicht geöffnet werden %s\n", time_pfad);
 		return;
 	}
 
-	fprintf(file, "Um: %s\nWurde der Buchstabe: %s\t eingegeben\n\n",
-			time_string, data);
+	fprintf(file, "Um: %s\nWurde der Buchstabe: %s\t eingegeben\n\n", time_string, data);
 
 	fclose(file);
 }
