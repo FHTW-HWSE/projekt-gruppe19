@@ -29,3 +29,5 @@ void time_track(const char *time_pfad, char *place_ID, char StudID) {
 
 	fclose(file);
 }
+
+Git Upload
