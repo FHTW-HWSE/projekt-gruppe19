@@ -25,7 +25,7 @@ void time_track(const char *time_pfad, char *data) {
 		return;
 	}
 
-	fprintf(file, "Um: %s\nWurde der Buchstabe: %s\t eingegeben\n\n", time_string, data);
+	fprintf(file, "Um: %s\nWurde der Platz XY and Student XY vergeben.\n\n", time_string, data);
 
 	fclose(file);
 }
