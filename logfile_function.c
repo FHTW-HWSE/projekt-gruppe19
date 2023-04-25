@@ -35,14 +35,7 @@ void logFile(const char *log_pfad, char place_ID, char student_ID, char assignme
 	fclose(file);
 }
 
-void time_function(){
 
-    time_t current_time = time(NULL);
-    struct tm *time_info = localtime(&current_time);
-    char time_string[20];
-    strftime(time_string, sizeof(time_string), "%Y-%m-%d %H:%M:%S", time_info);
-
-    return time_string;
 
 
 }
