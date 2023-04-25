@@ -3,7 +3,7 @@ void logFile(const char *log_pfad, char place_ID, char student_ID, char assignme
     char write_time[20];
     char add_or_remove;
 
-    add_remove = assignment_status;
+    add_or_remove = assignment_status;
 
     write_time = time_function;
     FILE *file = fopen(log_pfad, "a");
@@ -17,15 +17,15 @@ void logFile(const char *log_pfad, char place_ID, char student_ID, char assignme
         fprintf(file, "%c %s\n", write_time, place_ID, student_ID);
     }
 
-    if (add_remove == "ENTER"){
+    if (add_or_remove == "Enter"){
 
-        fprintf(file, "Der Student mit der Nummer %c hat um %c den Sitzplatz %s bezogen.\n", student_ID, write_time, place_ID);4
+        fprintf(file, "Der Student mit der Nummer %c hat um %c den Sitzplatz %s bezogen.\n", student_ID, write_time, place_ID);
 
         fprintf(file, "Die Nachbarn des Studenten mit der Nummer %c am Sitzplatz %c sind um %s ---------Nachbarn-------", student_ID, place_ID, write_time);
 
     }
 
-    if (add_remove == "EXIT"){
+    if (add_or_remove == "Remove"){
 
         fprintf(file, "Der Student mit der Nummer %c hat um %c den Sitzplatz %s verlassen.\n", student_ID, write_time, place_ID);
 
