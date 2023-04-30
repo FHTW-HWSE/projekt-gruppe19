@@ -2,7 +2,7 @@
 
 void logFile(const char *log_pfad, char place_ID, char student_ID, char assignment_status ){
 
-    char write_time[20];
+    char write_time[20] = {};
     char add_or_remove;
 
     add_or_remove = assignment_status;
@@ -47,7 +47,7 @@ void logFile(const char *log_pfad, char place_ID, char student_ID, char assignme
 
 void print_Seating_Chart_to_log_Array(const char *log_path, char seatingChart[][][], int rows, int columns, int inhalt) {
 
-    char write_time[20];
+    char write_time[20] = {};
 
     write_time = time_function();
 
