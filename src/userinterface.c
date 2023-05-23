@@ -10,75 +10,75 @@
 
         switch (option) {
             case 1:
-                printf("Bitte geben Sie die Anzahl der Reihen ein: ");
+                printf("Please enter the number of rows: ");
                 scanf("%d", &rows);
-                printf("Bitte geben Sie die Anzahl der Spalten ein: ");
+                printf("Please enter the number of columns: ");
                 scanf("%d", &cols);
                 generateSeatingArrangement(rows, cols, seatingArrangement);
-                printf("Belegungsmuster generiert.\n");
+                printf("Seats arranged.\n");
                 break;
             case 2: {
                 if (rows == 0 || cols == 0) {
-                    printf("Belegungsmuster muss zuerst generiert werden.\n");
+                    printf("Seats have to be arranged first.\n");
                     break;
                 }
                 Student student;
-                printf("Bitte geben Sie die Studierendenkennung ein: ");
+                printf("Please enter student ID: ");
                 scanf("%s", student.studentID);
-                printf("Bitte geben Sie die Reihe des Sitzplatzes ein: ");
+                printf("Please enter the row of the seat ");
                 scanf("%d", &student.row);
-                printf("Bitte geben Sie die Spalte des Sitzplatzes ein: ");
+                printf("Please enter the column of the seat ");
                 scanf("%d", &student.col);
 
                 if (student.row < 0 || student.row >= rows || student.col < 0 || student.col >= cols) {
-                    printf("Ungültige Sitzplatzposition.\n");
+                    printf("invalid seat position.\n");
                     break;
                 }
 
                 assignSeat(&student, seatingArrangement);
-                printf("Sitzplatz vergeben.\n");
+                printf("seat already taken.\n");
                 break;
             }
             case 3:
                 if (rows == 0 || cols == 0) {
-                    printf("Belegungsmuster muss zuerst generiert werden.\n");
+                    printf("Seat arrangment has to be generated first.\n");
                     break;
                 }
                 if (file == NULL) {
-                    printf("Fehler beim Öffnen der Datei.");
+                    printf("error opening file.");
                     break;
                 }
                 Student student;
-                printf("Bitte geben Sie die Studierendenkennung ein: ");
+                printf("Please enter student ID: ");
                 scanf("%s", student.studentID);
-                printf("Bitte geben Sie die Reihe des Sitzplatzes ein: ");
+                printf("Please enter row of the seat: ");
                 scanf("%d", &student.row);
-                printf("Bitte geben Sie die Spalte des Sitzplatzes ein: ");
+                printf("Please enter column of the seat: ");
                 scanf("%d", &student.col);
 
                 if (student.row < 0 || student.row >= rows || student.col < 0 || student.col >= cols) {
-                    printf("Ungültige Sitzplatzposition.\n");
+                    printf("invalid seat position.\n");
                     break;
                 }
 
                 saveStudentInfo(&student, file);
-                printf("Studierendenkennung und Sitzplatz abgespeichert.\n");
+                printf("Seat position and student ID saved.\n");
                 break;
             case 4: {
                 if (rows == 0 || cols == 0) {
-                    printf("Belegungsmuster muss zuerst generiert werden.\n");
+                    printf("Seat arrangment has to be generated first.\n");
                     break;
                 }
                 if (file == NULL) {
-                    printf("Fehler beim Öffnen der Datei.");
+                    printf("error opening file.");
                     break;
                 }
 
                 char searchID[10];
-                printf("Bitte geben Sie die Studierendenkennung ein: ");
+                printf("Please enter student ID: ");
                 scanf("%s", searchID);
 
-                // Nach Studierendenkennung in der Datei suchen und die Position abrufen
+                //Look for student ID in file and get position
 
                 Student searchStudent;
                 // Beispielannahme: Die Position des gesuchten Studenten ist searchStudent.row und searchStudent.col
@@ -90,19 +90,19 @@
             }
             case 5: {
                 if (rows == 0 || cols == 0) {
-                    printf("Belegungsmuster muss zuerst generiert werden.\n");
+                    printf("Seat arrangment has to be generated first.\n");
                     break;
                 }
                 if (file == NULL) {
-                    printf("Fehler beim Öffnen der Datei.");
+                    printf("error opening file.");
                     break;
                 }
 
                 char searchID[10];
-                printf("Bitte geben Sie die Studierendenkennung ein: ");
+                printf("Please enter student ID: ");
                 scanf("%s", searchID);
 
-                // Nach Studierendenkennung in der Datei suchen und die Position abrufen
+                //Look for student ID in file and get position
 
                 Student searchStudent;
                 // Beispielannahme: Die Position des gesuchten Studenten ist searchStudent.row und searchStudent.col
@@ -113,10 +113,10 @@
                 break;
             }
             case 6:
-                printf("Programm wird beendet.\n");
+                printf("Program is exiting.\n");
                 break;
             default:
-                printf("Ungültige Option. Bitte wählen Sie erneut.\n");
+                printf("Invalid option. Choose again.\n");
         }
     } while (option != 6);
 
