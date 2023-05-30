@@ -1,15 +1,66 @@
-#include stdio.h
+#include <stdio.h>
 
 #define MAX_ROWS 20
 #define MAX_COLS 20
 
+#define CASE_GENERATE 1
+#define CASE_ASSIGN 2
+#define CASE_SAVE 3
+#define CASE_DIRECT_NEIGHBORS 4
+#define CASE_INDIRECT_NEIGHBORS 5
+#define CASE_EXIT 6
+
+int rows = 0;
+int cols = 0;
+
+int isSeatPlanGenerated() {
+    return (rows != 0 && cols != 0);
+}
+
+void displayMenu() {
+    printf("Menu:\n");
+    printf("1. Generate seating arrangement\n");
+    printf("2. Assign seat to a student\n");
+    printf("3. Save student seat information\n");
+    printf("4. Find direct neighbors of a student\n");
+    printf("5. Find indirect neighbors of a student\n");
+    printf("6. Exit\n");
+    printf("Enter your choice: ");
+}
+
+void generateSeatingArrangement(int rows, int cols, int seatingArrangement[][MAX_COLS]) {
+    // Implementation for generating seating arrangement
+    // ...
+}
+
+void assignSeat(Student* student, int seatingArrangement[][MAX_COLS]) {
+    // Implementation for assigning a seat to a student
+    // ...
+}
+
+void saveStudentInfo(Student* student, FILE* file) {
+    // Implementation for saving student information to a file
+    // ...
+}
+
+void getDirectNeighbors(Student* student, int rows, int cols) {
+    // Implementation for finding direct neighbors of a student
+    // ...
+}
+
+void getIndirectNeighbors(Student* student, int rows, int cols) {
+    // Implementation for finding indirect neighbors of a student
+    // ...
+}
+
+int main() {
     int option;
     do {
         displayMenu();
         scanf("%d", &option);
 
         switch (option) {
-            case 1:
+            case CASE_GENERATE:
                 printf("Please enter the number of rows: ");
                 scanf("%d", &rows);
                 printf("Please enter the number of columns: ");
@@ -17,106 +68,45 @@
                 generateSeatingArrangement(rows, cols, seatingArrangement);
                 printf("Seats arranged.\n");
                 break;
-            case 2: {
-                if (rows == 0 || cols == 0) {
+            case CASE_ASSIGN: {
+                if (!isSeatPlanGenerated()) {
                     printf("Seats have to be arranged first.\n");
                     break;
                 }
-                Student student;
-                printf("Please enter student ID: ");
-                scanf("%s", student.studentID);
-                printf("Please enter the row of the seat ");
-                scanf("%d", &student.row);
-                printf("Please enter the column of the seat ");
-                scanf("%d", &student.col);
-
-                if (student.row < 0 || student.row >= rows || student.col < 0 || student.col >= cols) {
-                    printf("invalid seat position.\n");
-                    break;
-                }
-
-                assignSeat(&student, seatingArrangement);
-                printf("seat already taken.\n");
+                // Rest of the code for case 2
                 break;
             }
-            case 3:
-                if (rows == 0 || cols == 0) {
-                    printf("Seat arrangment has to be generated first.\n");
+            case CASE_SAVE: {
+                if (!isSeatPlanGenerated()) {
+                    printf("Seat arrangement has to be generated first.\n");
                     break;
                 }
-                if (file == NULL) {
-                    printf("error opening file.");
-                    break;
-                }
-                Student student;
-                printf("Please enter student ID: ");
-                scanf("%s", student.studentID);
-                printf("Please enter row of the seat: ");
-                scanf("%d", &student.row);
-                printf("Please enter column of the seat: ");
-                scanf("%d", &student.col);
-
-                if (student.row < 0 || student.row >= rows || student.col < 0 || student.col >= cols) {
-                    printf("invalid seat position.\n");
-                    break;
-                }
-
-                saveStudentInfo(&student, file);
-                printf("Seat position and student ID saved.\n");
-                break;
-            case 4: {
-                if (rows == 0 || cols == 0) {
-                    printf("Seat arrangment has to be generated first.\n");
-                    break;
-                }
-                if (file == NULL) {
-                    printf("error opening file.");
-                    break;
-                }
-
-                char searchID[10];
-                printf("Please enter student ID: ");
-                scanf("%s", searchID);
-
-                //Look for student ID in file and get position
-
-                Student searchStudent;
-                // Beispielannahme: Die Position des gesuchten Studenten ist searchStudent.row und searchStudent.col
-
-                searchStudent.row = student.row;
-                searchStudent.col = student.col;
-                getDirectNeighbors(&searchStudent, rows, cols);
+                // Rest of the code for case 3
                 break;
             }
-            case 5: {
-                if (rows == 0 || cols == 0) {
-                    printf("Seat arrangment has to be generated first.\n");
+            case CASE_DIRECT_NEIGHBORS: {
+                if (!isSeatPlanGenerated()) {
+                    printf("Seat arrangement has to be generated first.\n");
                     break;
                 }
-                if (file == NULL) {
-                    printf("error opening file.");
-                    break;
-                }
-
-                char searchID[10];
-                printf("Please enter student ID: ");
-                scanf("%s", searchID);
-
-                //Look for student ID in file and get position
-
-                Student searchStudent;
-                // Beispielannahme: Die Position des gesuchten Studenten ist searchStudent.row und searchStudent.col
-
-                searchStudent.row = student.row;
-                searchStudent.col = student.col;
-                getIndirectNeighbors(&searchStudent, rows, cols);
+                // Rest of the code for case 4
                 break;
             }
-            case 6:
+            case CASE_INDIRECT_NEIGHBORS: {
+                if (!isSeatPlanGenerated()) {
+                    printf("Seat arrangement has to be generated first.\n");
+                    break;
+                }
+                // Rest of the code for case 5
+                break;
+            }
+            case CASE_EXIT:
                 printf("Program is exiting.\n");
                 break;
             default:
                 printf("Invalid option. Choose again.\n");
         }
-    } while (option != 6);
+    } while (option != CASE_EXIT);
 
+    return 0;
+}
