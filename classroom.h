@@ -16,6 +16,8 @@ typedef struct seat {
 typedef struct classroom {
     seat * firstSeat;
     seat * lastSeat;
+    unsigned int rows;
+    unsigned int cols;
 } classroom;
 
 //-----FUNCTIONS-----
