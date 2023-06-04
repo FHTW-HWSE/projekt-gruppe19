@@ -16,8 +16,6 @@ typedef struct seat {
 typedef struct classroom {
     seat * firstSeat;
     seat * lastSeat;
-    unsigned int rows;
-    unsigned int cols;
 } classroom;
 
 //-----FUNCTIONS-----
@@ -39,7 +37,7 @@ classroom * classroomCreate(void)
 ///classroomAppendLastSeat([the earlier created classroom's name], [the ID of the student to book a seat for]);
 void classroomAppendLastSeat(classroom * myClassroom, char * newStudent)
 {
-    seat * newSeat = (seat *) malloc(sizeof(seat *));
+    seat * newSeat = (seat *) malloc(sizeof(seat));
     if(!newSeat) return;
 
     newSeat->nextSeat = 0;
@@ -53,7 +51,7 @@ void classroomAppendLastSeat(classroom * myClassroom, char * newStudent)
 ///classroomAppendFirstSeat([the earlier created classroom's name], [the ID of the student to book a seat for]);
 void classroomAppendFirstSeat(classroom * myClassroom, char * newStudent)
 {
-    seat * newSeat = (seat *) malloc(sizeof(seat *));
+    seat * newSeat = (seat *) malloc(sizeof(seat));
     if(!newSeat) return;
 
     newSeat->nextSeat = myClassroom->firstSeat;
@@ -65,7 +63,7 @@ void classroomAppendFirstSeat(classroom * myClassroom, char * newStudent)
 ///seat * [desired pointer name] = classroomSearchStudAddr([the classroom's name to search in], [the student ID to search for]);
 seat * classroomSearchStudAddr(classroom * myClassroom, char * searchedStudent)
 {
-    seat * searchSeat = (seat *) malloc(sizeof(seat *));
+    seat * searchSeat = (seat *) malloc(sizeof(seat));
     if(!searchSeat) return 0;
 
     searchSeat = myClassroom->firstSeat;
@@ -81,7 +79,7 @@ seat * classroomSearchStudAddr(classroom * myClassroom, char * searchedStudent)
 ///unsigned int [desired variable name] = classroomSearchStudOrd([the classroom's name to search in], [the number to search for]);
 unsigned int classroomSearchStudOrd(classroom * myClassroom, char * searchedStudent)
 {
-    seat * searchSeat = (seat *) malloc(sizeof(seat *));
+    seat * searchSeat = (seat *) malloc(sizeof(seat));
     if(!searchSeat) return 0;
 
     unsigned int ord = 0;
@@ -98,7 +96,7 @@ unsigned int classroomSearchStudOrd(classroom * myClassroom, char * searchedStud
 ///seat * [desired pointer name] = classroomSearchOrdAddr([the classroom's name to search in], [the seat number to search for]);
 seat * classroomSearchOrdAddr(classroom * myClassroom, unsigned int searchedOrd)
 {
-    seat * searchSeat = (seat *) malloc(sizeof(seat *));
+    seat * searchSeat = (seat *) malloc(sizeof(seat));
     if(!searchSeat) return 0;
 
     searchSeat = myClassroom->firstSeat;
@@ -115,7 +113,7 @@ seat * classroomSearchOrdAddr(classroom * myClassroom, unsigned int searchedOrd)
 ///char * [desired pointer/string name] = classroomSearchOrdStud([the classroom's name to search in], [the seat number to search for]);
 char * classroomSearchOrdStud(classroom * myClassroom, unsigned int searchedOrd)
 {
-    seat * searchSeat = (seat *) malloc(sizeof(seat *));
+    seat * searchSeat = (seat *) malloc(sizeof(seat));
     if(!searchSeat) return 0;
 
     searchSeat = myClassroom->firstSeat;
@@ -130,7 +128,7 @@ char * classroomSearchOrdStud(classroom * myClassroom, unsigned int searchedOrd)
 ///classroomRemove([the name of the classroom], [the student ID of the student to remove]);
 void classroomRemove(classroom * myClassroom, char * removeStudent)
 {
-    seat * searchSeat = (seat *) malloc(sizeof(seat *));
+    seat * searchSeat = (seat *) malloc(sizeof(seat));
     if(!searchSeat) return;
 
     searchSeat = myClassroom->firstSeat;
@@ -143,17 +141,45 @@ void classroomRemove(classroom * myClassroom, char * removeStudent)
 
 ///classroomPrint - listing all the students in the classroom:
 ///classroomPrint([the name of the classroom]);
-void classroomPrint(classroom * myClassroom)
+void classroomPrint(classroom * myClassroom, unsigned int rows, unsigned int cols)
 {
-    seat * searchSeat = (seat *) malloc(sizeof(seat *));
+    seat * searchSeat = (seat *) malloc(sizeof(seat));
     if(!searchSeat) return;
 
     searchSeat = myClassroom->firstSeat;
-    while(searchSeat)
+
+    printf("---front---\n");
+    for(int i = 0; i < rows; i++)
     {
-        printf("%s\t", searchSeat->student);
+        for (int j = 0; j < cols; ++j) {
+            printf("%s ", searchSeat->student);
+            searchSeat = searchSeat->nextSeat;
+        }
+        printf("\n");
+    }
+}
+
+char classroomAssignStudent(classroom * myClassroom, char * newStudent, unsigned int seatNumber)
+{
+    seat * searchSeat = (seat *) malloc(sizeof(seat));
+    if(!searchSeat) return 0;
+
+    searchSeat = myClassroom->firstSeat;
+    while(searchSeat) {
+        if(!strcmp(searchSeat->student, newStudent)) return -2;
         searchSeat = searchSeat->nextSeat;
     }
+
+    searchSeat = myClassroom->firstSeat;
+    for (int i = 0; i < seatNumber; ++i) searchSeat = searchSeat->nextSeat;
+    if(strcmp(searchSeat->student, "########")) return -1;
+    strcpy(searchSeat->student, newStudent);
+    return 1;
+}
+
+void classroomRemoveStudent(classroom * myClassroom, unsigned int seatNumber)
+{
+    classroomAssignStudent(myClassroom, "########", seatNumber);
 }
 
 #endif // CLASSROOM_H_INCLUDED
