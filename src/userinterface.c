@@ -1,23 +1,33 @@
+//-----HEADER FILES-----//
 #include <stdio.h>
 #include <string.h>
 #include "../classroom.h"
 
+//-----MACROS-----//
 #define MAX_ROWS 20
 #define MAX_COLS 20
+#define CHESSBOARD 'c'
+#define FAR_SPACED 'f'
+
+#define ERROR "An error occurred.\n"
 
 #define CASE_GENERATE 1
 #define CASE_ASSIGN 2
 #define CASE_SAVE 3
 #define CASE_DIRECT_NEIGHBORS 4
 #define CASE_INDIRECT_NEIGHBORS 5
-#define CASE_EXIT 6
+#define CASE_REMOVE 6
+#define CASE_EXIT 7
 
+//-----GLOBAL VARIABLES-----//
 unsigned int rows = 0;
 unsigned int cols = 0;
 char seatingArrangement;
 
-char opt1[50] = "Generate seating arrangement";
-
+char opt1[] = "Generate seating arrangement";
+//-----FUNCTIONS-----//
+///Clears input buffer. Must used to avoid input type mismatches of scanf function.
+///int [count of buffered and deleted characters] = clearStdinBuffer();
 int clearStdinBuffer() {
     int bufferedCharacters = -1;
     int c;
@@ -29,8 +39,13 @@ int clearStdinBuffer() {
     return bufferedCharacters;
 }
 
-unsigned int inputNumbers(char *request, unsigned int upperLimit, unsigned int lowerLimit) {
-    unsigned int result;
+///Reads numbers from stdin. It needs the string it will ask for the numbers with,
+/// the maximum and the minimum of the numbers that can be entered. Returns with the number
+/// received from the user.
+///int userInputNumber = inputNumbers([String like "Please input a number here: "],
+/// [max value to enter], [min value to enter]);
+int inputNumbers(char *request, unsigned int upperLimit, unsigned int lowerLimit) {
+    int result;
     do {
         printf("%s", request);
         scanf("%d", &result);
@@ -40,16 +55,8 @@ unsigned int inputNumbers(char *request, unsigned int upperLimit, unsigned int l
     return result;
 }
 
-void inputSeatingArrangement(void) {
-    do {
-        printf("Please enter the arrangement pattern (c - chessboard; f - far spaced): ");
-        scanf("%c", &seatingArrangement);
-        clearStdinBuffer();
-    } while (seatingArrangement != 'f' && seatingArrangement != 'c');
-}
-
-char inputStudentID(classroom * Classroom, char *newStudent, char * request,
-                    char * found, char * notFound) {
+char inputStudentID(classroom *Classroom, char *newStudent, char *request,
+                    char *found, char *notFound) {
     char isValid;
     do {
         printf("%s", request);
@@ -63,7 +70,7 @@ char inputStudentID(classroom * Classroom, char *newStudent, char * request,
 
     char result = classroomCheckStudent(Classroom, newStudent);
     if (result == -1) printf("%s", found);
-    else if (result == 0) printf("The student couldn't be assigned.\n");
+    else if (result == 0) printf(ERROR);
     else printf("%s", notFound);
     return result;
 }
@@ -74,20 +81,37 @@ int isSeatPlanGenerated() {
 
 unsigned int calcSeat(unsigned int row, unsigned int col) {
     unsigned int seatIndex = (row - 1) * cols + col - 1;
-    if ((seatingArrangement == 'f' && row & 1 && col & 1)
-        || (seatingArrangement == 'c' && !((row + col) & 1)))
+    if ((seatingArrangement == FAR_SPACED && row & 1 && col & 1)
+        || (seatingArrangement == CHESSBOARD && !((row + col) & 1)))
         return seatIndex;
     return -1;
 }
 
-void calcRowsCols(unsigned int seatIndex, unsigned int * row, unsigned int * col)
-{
-    *col = seatIndex % cols + 1;
-    if(!*col) *col += cols - 1;
-    *row = seatIndex / cols + 1;
-    if(!seatIndex % cols) (*row)--;
+///Reads a character from stdin and saves it as the seating arrangement
+/// (global variable), which can be FAR_SPACED or CHESSBOARD.
+///inputSeatingArrangement();
+void inputSeatingArrangement(void) {
+    do {
+        printf("Please enter the arrangement pattern (c - chessboard; f - far spaced): ");
+        scanf("%c", &seatingArrangement);
+        clearStdinBuffer();
+    } while (seatingArrangement != FAR_SPACED && seatingArrangement != CHESSBOARD);
 }
 
+///Calculates rows and columns (both starting from 1) from the received seat number
+/// (seat index, which is 0 for the first seat). It writes the value into the original
+/// variables through pointers, so it takes the original variables' memory address.
+///calcRowsCols([the seat number], [the memory address of the variable containing the
+/// specific row], [similar memory address for the column]);
+void calcRowsCols(unsigned int seatIndex, unsigned int *row, unsigned int *col) {
+    *col = seatIndex % cols + 1;
+    if (!*col) *col += cols - 1;
+    *row = seatIndex / cols + 1;
+    if (!seatIndex % cols) (*row)--;
+}
+
+///Displays the main menu.
+///displayMenu();
 void displayMenu() {
     printf("Menu:\n");
     printf("1. %s\n", opt1);
@@ -95,15 +119,21 @@ void displayMenu() {
     printf("3. Save student seat information\n");
     printf("4. Find direct neighbors of a student\n");
     printf("5. Find indirect neighbors of a student\n");
-    printf("6. Exit\n");
+    printf("6. Remove student from a seat\n");
+    printf("7. Exit\n");
     printf("Enter your choice: ");
 }
 
+///Generates the seating arrangement, using the rows' and columns' global variables.
+/// Takes the classroom to fill. returns with the maximal number of students to be
+/// assigned safely in the room.
+///unsigned short [max people] = generateSeatingArrangement([name of classroom]);
 unsigned short generateSeatingArrangement(classroom *Classroom) {
     unsigned short result = 0;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if ((seatingArrangement == 'c' && !((i + j) & 1)) || (seatingArrangement == 'f' && !(i & 1) && !(j & 1))) {
+            if ((seatingArrangement == CHESSBOARD && !((i + j) & 1)) ||
+            (seatingArrangement == FAR_SPACED && !(i & 1) && !(j & 1))) {
                 classroomAppendLastSeat(Classroom, "########");
                 result++;
             } else { classroomAppendLastSeat(Classroom, "--------"); }
@@ -113,43 +143,88 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
     return result;
 }
 
-
-void assignSeat(classroom * Classroom, char * newStudent, unsigned int seatNumber,
-                unsigned int row, unsigned int col, unsigned short * currentStudents) {
+///Assigns a student to a seat. Takes the classroom, the student ID, the seat's number,
+/// the seat's row and column and the address of the variable which stores the amount
+/// of students assigned to the room.
+///assignSeat([name of classroom], [ID of student to be assigned], [seat's index],
+/// [seat's row], [seat's column], [the address of the current student's count variable]);
+void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
+                unsigned int row, unsigned int col, unsigned short *currentStudents) {
     char wasItSuccessful = classroomAssignStudent(Classroom,
                                                   newStudent, seatNumber);
     if (wasItSuccessful == 1) {
 
-        currentStudents++;
-        printf("Student %s assigned to seat %d (%d. row, %d. column).\n",
+        (*currentStudents)++;
+        printf("Student %s has been assigned to seat %d (%d. row, %d. column).\n",
                newStudent, seatNumber,
                row, col);
-    } else if (wasItSuccessful == 0) { printf("The student couldn't be assigned.\n"); }
+    } else if (wasItSuccessful == 0) { printf(ERROR); }
     else { printf("The seat is already occupied.\n"); }
 }
+
 /*
 void saveStudentInfo(Student* student, FILE* file) {
     // Implementation for saving student information to a file
     // ...
 }
 */
-void getNeighbors(classroom * Classroom, char * searchedStudent, char neighborhoodType) {
-    unsigned int foundSeatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
-    unsigned int row, col, *r = & row, *c = & col;
-    calcRowsCols(foundSeatIndex, r, c);
 
+///Gets the rows and columns of a specific student's seat. Takes the classroom to search in,
+/// the student to search for, and the memory addresses of the external rows and columns to write,
+/// the values into them. Returns the seat index it has found (and technically, the row and column
+/// numbers through the pointers).
+///unsigned int [the seat number's variable that receives the value] =
+/// getSeatDetails([classroom's name], [student ID], address of the rows that receives the value],
+/// [address of the column that receives the value]);
+unsigned int getSeatDetails(classroom * Classroom, char * searchedStudent,
+                            unsigned int * row, unsigned int * col) {
+    unsigned int foundSeatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
+    calcRowsCols(foundSeatIndex, row, col);
+
+    return foundSeatIndex;
+}
+
+///Prints the surroundings of a specific student. Takes the name of the classroom, the searched
+/// student's ID and the neighborhood type, which can be 1 (direct neighbors) or 2
+/// (indirect neighbors too).
+///findNeighbors([the classroom's name], [the searched student's ID], [neighborhood type]);
+void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoodType) {
+    unsigned int row, col;
+    unsigned int seatIndex = getSeatDetails(Classroom, searchedStudent, &row, &col);
+    if(seatIndex == -1) {
+        printf(ERROR);
+        return;
+    }
     classroomPrintPartial(Classroom, rows, cols, row, col, neighborhoodType);
 }
-/*
-void getIndirectNeighbors(Student* student, int rows, int cols) {
-    // Implementation for finding indirect neighbors of a student
-    // ...
+
+///Removes student from the classroom. Takes the classroom name, the ID of the student to remove,
+/// and the memory address of the variable containing the currently assigned students.
+///removeStudent([name of the classroom], [student ID to remove], [current students variable's address]);
+void removeStudent(classroom * Classroom, char * studentToRemove, unsigned short * currentStudents){
+    unsigned int row, col;
+    unsigned int seatIndex = getSeatDetails(Classroom, studentToRemove, &row, &col);
+    if(seatIndex == -1) {
+        printf(ERROR);
+        return;
+    }
+    char wasItSuccessful = classroomRemoveStudent(Classroom, seatIndex);
+
+    if (wasItSuccessful == 1) {
+
+        (*currentStudents)--;
+        printf("Student %s has been removed from seat %d (%d. row, %d. column).\n",
+               studentToRemove, seatIndex,
+               row, col);
+    }
+    else { printf(ERROR); }
 }
-*/
+
+
 int main() {
     classroom *Classroom = classroomCreate();
     int option = -1;
-    unsigned short currentStudents = 0, maxStudents, *cS = &currentStudents;
+    unsigned short currentStudents = 0, maxStudents;
 
     do {
         displayMenu();
@@ -181,21 +256,21 @@ int main() {
                 } else {
                     char newStudent[9];
                     char inputResult = inputStudentID(Classroom, newStudent,
-                                   "Please enter the student ID you would like to assign: ",
-                    "The student is already assigned.\n", "");
-                    if(inputResult != 1) break;
+                                                      "Please enter the student ID you would like to assign: ",
+                                                      "The student is already assigned.\n", "");
+                    if (inputResult != 1) break;
 
                     unsigned int row, col, seatNumber;
 
                     do {
-                        row= inputNumbers("Please enter the seat's row: ",
-                                                   rows, 1);
-                        col= inputNumbers("Please enter the seat's column: ",
-                                                   cols, 1);
+                        row = inputNumbers("Please enter the seat's row: ",
+                                           rows, 1);
+                        col = inputNumbers("Please enter the seat's column: ",
+                                           cols, 1);
                         seatNumber = calcSeat(row, col);
                     } while (seatNumber == -1);
 
-                    assignSeat(Classroom, newStudent, seatNumber, row, col, cS);
+                    assignSeat(Classroom, newStudent, seatNumber, row, col, &currentStudents);
                 }
                 break;
             }
@@ -216,11 +291,11 @@ int main() {
 
                 char searchedStudent[9];
                 char inputResult = inputStudentID(Classroom, searchedStudent,
-                               "Please enter the student's ID to be searched for: ",
-                               "","The student was not found.\n");
-                if(inputResult != -1) break;
+                                                  "Please enter the student's ID to be searched for: ",
+                                                  "", "The student was not found.\n");
+                if (inputResult != -1) break;
 
-                getNeighbors(Classroom, searchedStudent, 1);
+                findNeighbors(Classroom, searchedStudent, 1);
 
                 break;
             }
@@ -232,14 +307,33 @@ int main() {
 
                 char searchedStudent[9];
                 char inputResult = inputStudentID(Classroom, searchedStudent,
-                               "Please enter the student's ID to be searched for: ",
-                               "", "The student was not found.\n");
-                if(inputResult != -1) break;
+                                                  "Please enter the student's ID to be searched for: ",
+                                                  "", "The student was not found.\n");
+                if (inputResult != -1) break;
 
-                getNeighbors(Classroom, searchedStudent, 2);
+                findNeighbors(Classroom, searchedStudent, 2);
 
                 break;
             }
+
+            case CASE_REMOVE: {
+                if (!isSeatPlanGenerated()) {
+                    printf("Seats have to be arranged first.\n");
+                    break;
+                } else {
+                    char rmStudent[9];
+                    char inputResult = inputStudentID(
+                            Classroom,
+                            rmStudent,
+                            "Please enter the student ID you would like to remove: ",
+                            "", "The student was not found.\n");
+                    if (inputResult != -1) break;
+
+                    removeStudent(Classroom, rmStudent, &currentStudents);
+                }
+                break;
+            }
+
             case CASE_EXIT:
                 printf("Program is exiting.\n");
                 break;
