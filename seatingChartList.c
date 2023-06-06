@@ -20,10 +20,10 @@ int main() {
     char choice = 'a';
     while (rows > 20 || columns > 20) { // stops the function if the number of rows and columns are too high
 
-        printf("Enter the number of rows (maximum %d): ", 20);
+        printf("Enter the number of rows (maximum 20): ");
         rows = inputRowsAndCols();
 
-        printf("Enter the number of columns (maximum %d): ", 20);
+        printf("Enter the number of columns (maximum 20): ");
         columns = inputRowsAndCols();
         if (rows > 20 || columns > 20) printf("Maximum number of rows or columns exceeded. Please try again\n");
     }
@@ -35,10 +35,7 @@ int main() {
             while (getchar() != '\n');  // Clear input buffer
         }
     }
-    /*while(choice != 's' && choice != 'p') {
-        choice = getchar();
-        if(choice != 's' && choice != 'p') printf("Invalid Input. Please try again. The only valid inputs are 's' for a Chessboard Layout or 'p' for a far spaced Layout (only lowercase): ");
-    }*/
+
     Seat* head = generateSeatingChart(rows, columns);
     if (head != NULL) {
         printSeatingChart(head, rows, columns, choice);
@@ -166,6 +163,13 @@ int inputRowsAndCols(void)
         {
             printf("\nThe selected number of rows or columns: %s\n", inputString);
             return atoi(inputString);
+        }
+        else
+        {
+            printf("Invalid input. Please try again.\nEnter a valid number (maximum 20): ");
+            while (getchar() != '\n'); // Clear input buffer
+            inputDigit = 0; // Reset inputDigit
+            inputString[0] = '\0'; // Reset inputString
         }
     }
 }
