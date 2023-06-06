@@ -1,6 +1,6 @@
 #include "time_track.h"
 
-void logFile(const char *log_pfad, char place_ID, char student_ID, char assignment_status ){
+void logFile(const char log_pfad, char place_ID, char student_ID, char assignment_status ){
 
     char write_time[20] = {};
     char add_or_remove;
