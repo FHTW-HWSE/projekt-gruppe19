@@ -243,6 +243,25 @@ void validPath(const char log_path){
     }
 }
 
+void writeSeatingChartToFile(FILE *log_pfad, Node *head){
+
+    char write_time[20] = {};
+    write_time = time_function();
+    FILE *file = fopen(log_path, "a");
+    if (file == NULL) {
+        fprintf(stderr, "Fehler, die Datei konnte nicht geöffnet werden %s\n", log_pfad);
+        return;
+    }
+
+    if(head->next != NULL)
+    {
+        fprintf(fptr, "\nPet Name: %s\nAge: %d\n\n", head->name, head->age);
+        writeToFile(fptr, head->next);
+    }
+    else
+        fprintf(fptr, "\nPet Name: %s\nAge: %d\n\n", head->name, head->age);
+}
+
 void logFileSeatAssignment(const char *log_pfad, char place_ID, char student_ID, char assignment_status ){
 
     char write_time[20] = {};
