@@ -1,8 +1,10 @@
 //-----HEADER FILES-----//
 #include <stdio.h>
 #include <string.h>
-#include "../classroom.h"
-#include "../time_track_aktuell.h"
+#include <stdbool.h>
+#include "classroom.h"
+//#include "time_track_aktuell.h"
+#include <time.h>
 
 //-----MACROS-----//
 #define MAX_ROWS 20
@@ -25,7 +27,7 @@
 unsigned int rows = 0;
 unsigned int cols = 0;
 char seatingArrangement;
-const char logpath = NULL;
+const char *logpath = NULL;
 
 char opt1[] = "Generate seating arrangement";
 //-----FUNCTIONS-----//
@@ -35,7 +37,7 @@ int clearStdinBuffer() {
     int bufferedCharacters = -1;
     int c;
     do {
-        scanf("%c", &c);
+        scanf("%i", &c);
         if (++bufferedCharacters == -1) bufferedCharacters++;
     } while (c != '\n' && c != EOF);
 
@@ -130,7 +132,7 @@ void displayMenu() {
     printf("5. Find indirect neighbors of a student\n");
     printf("6. Remove student from a seat\n");
     printf("7. Enter a logfile path\n");
-    printf("0. Exit the program");
+    printf("0. Exit the program\n");
     printf("Enter your choice: ");
 }
 
@@ -143,7 +145,7 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             if ((seatingArrangement == CHESSBOARD && !((i + j) & 1)) ||
-            (seatingArrangement == FAR_SPACED && !(i & 1) && !(j & 1))) {
+                (seatingArrangement == FAR_SPACED && !(i & 1) && !(j & 1))) {
                 classroomAppendLastSeat(Classroom, "########");
                 result++;
             } else { classroomAppendLastSeat(Classroom, "--------"); }
@@ -168,7 +170,7 @@ void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
         printf("Student %s has been assigned to seat %d (%d. row, %d. column).\n",
                newStudent, seatNumber,
                row, col);
-        logFileSeatAssignment(logpath, seatNumber, newStudent, "enter");
+        logFileSeatAssignment(*logpath, seatNumber, newStudent, 'e');
     } else if (wasItSuccessful == 0) { printf(ERROR); }
     else { printf("The seat is already occupied.\n"); }
 }
@@ -227,23 +229,23 @@ void removeStudent(classroom * Classroom, char * studentToRemove, unsigned short
         printf("Student %s has been removed from seat %d (%d. row, %d. column).\n",
                studentToRemove, seatIndex,
                row, col);
-        logFileSeatAssignment(logpath, seatIndex, studentToRemove, "remove");
+        logFileSeatAssignment(*logpath, seatIndex, studentToRemove, 'r');
     }
     else { printf(ERROR); }
 }
 
 ///Checks if the entered path is valid or not
-void validPath(const char log_path){
+bool validPath(const char log_path){
 
     if(log_path == NULL) {
         return (false);
     }
     else{
-        return (true));
+        return (true);
     }
 }
 
-void writeSeatingChartToFile(FILE *log_pfad, Node *head){
+/*void writeSeatingChartToFile(FILE *log_pfad, Node *head){
 
     char write_time[20] = {};
     write_time = time_function();
@@ -261,39 +263,47 @@ void writeSeatingChartToFile(FILE *log_pfad, Node *head){
     else
         fprintf(fptr, "\nPet Name: %s\nAge: %d\n\n", head->name, head->age);
 }
+*/
 
 void logFileSeatAssignment(const char *log_pfad, char place_ID, char student_ID, char assignment_status ){
 
-    char write_time[20] = {};
-    char add_or_remove;
+    //char write_time[20] = {};
+    char add_or_remove = '\0';
 
     add_or_remove = assignment_status;
 
-    write_time = time_function();
-    FILE *file = fopen(log_path, "a");
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    printf ( "Current local time and date: %s", asctime (timeinfo) );
+
+    //write_time = time_function();
+    FILE *file = fopen(log_pfad, "a");
     if (file == NULL) {
         fprintf(stderr, "Fehler, die Datei konnte nicht geöffnet werden %s\n", log_pfad);
         return;
     }
 
-    if (add_or_remove == NULL) {
+    if (add_or_remove == '\0') {
 
-        fprintf(file, "%c %s\n", write_time, place_ID, student_ID);
+        fprintf(file, "%s %c %c\n", asctime(timeinfo), place_ID, student_ID);
     }
 
-    if (add_or_remove == "enter"){
+    if (add_or_remove == 'e'){
 
-        fprintf(file, "Der Student mit der Nummer %c hat um %c den Sitzplatz %s bezogen.\n", student_ID, write_time, place_ID);
+        fprintf(file, "Der Student mit der Nummer %c hat um %s den Sitzplatz %s bezogen.\n", student_ID, asctime(timeinfo), place_ID);
 
-        fprintf(file, "Die Nachbarn des Studenten mit der Nummer %c am Sitzplatz %c sind um %s ---------Nachbarn-------", student_ID, place_ID, write_time);
+        fprintf(file, "Die Nachbarn des Studenten mit der Nummer %c am Sitzplatz %c sind um %s ---------Nachbarn-------", student_ID, place_ID, asctime(timeinfo));
 
     }
 
-    if (add_or_remove == "remove"){
+    if (add_or_remove == 'r'){
 
-        fprintf(file, "Der Student mit der Nummer %c hat um %c den Sitzplatz %s verlassen.\n", student_ID, write_time, place_ID);
+        fprintf(file, "Der Student mit der Nummer %c hat um %s den Sitzplatz %s verlassen.\n", student_ID, asctime(timeinfo), place_ID);
 
-        fprintf(file, "Die Nachbarn des Studenten mit der Nummer %c am Sitzplatz %c sind um %s ---------Nachbarn-------", student_ID, place_ID, write_time);
+        fprintf(file, "Die Nachbarn des Studenten mit der Nummer %c am Sitzplatz %c sind um %s ---------Nachbarn-------", student_ID, place_ID, asctime(timeinfo));
 
     }
     fclose(file);
@@ -303,14 +313,21 @@ void logFileSeatAssignment(const char *log_pfad, char place_ID, char student_ID,
 int main() {
     classroom *Classroom = classroomCreate();
     int option = -1;
+    int convertedOption;
+
     unsigned short currentStudents = 0, maxStudents;
+    char wantNewPath = '\0';
 
     do {
         displayMenu();
-        scanf("%d", &option);
-        clearStdinBuffer();
+        while((option = getchar()) != '\n' && option != EOF){
+            convertedOption = option - '0';
+        }
 
-        switch (option) {
+        printf("%i",convertedOption);
+        //clearStdinBuffer();
+
+        switch (convertedOption) {
             case CASE_GENERATE:
                 if (!isPathKnown()){
                     printf("Please enter a logpath first at option 7.\n");
@@ -332,7 +349,8 @@ int main() {
 
                 break;
 
-            case CASE_ASSIGN: {
+
+            case CASE_ASSIGN:
                 if (!isPathKnown()){
                     printf("Please enter a logpath first at option 7.\n");
                     break;
@@ -361,8 +379,8 @@ int main() {
                     assignSeat(Classroom, newStudent, seatNumber, row, col, &currentStudents);
                 }
                 break;
-            }
-            case CASE_SAVE: {
+
+            case CASE_SAVE:
                 if (!isPathKnown()){
                     printf("Please enter a logpath first at option 7.\n");
                     break;
@@ -375,8 +393,8 @@ int main() {
 
 
                 break;
-            }
-            case CASE_DIRECT_NEIGHBORS: {
+
+            case CASE_DIRECT_NEIGHBORS:
                 if (!isPathKnown()){
                     printf("Please enter a logpath first at option 7.\n");
                     break;
@@ -395,8 +413,8 @@ int main() {
                 findNeighbors(Classroom, searchedStudent, 1);
 
                 break;
-            }
-            case CASE_INDIRECT_NEIGHBORS: {
+
+            case CASE_INDIRECT_NEIGHBORS:
                 if (!isPathKnown()){
                     printf("Please enter a logpath first at option 7.\n");
                     break;
@@ -405,19 +423,20 @@ int main() {
                     printf("Seat arrangement has to be generated first.\n");
                     break;
                 }
-
-                char searchedStudent[9];
-                char inputResult = inputStudentID(Classroom, searchedStudent,
-                                                  "Please enter the student's ID to be searched for: ",
-                                                  "", "The student was not found.\n");
+                else{
+                    char searchedStudent[9];
+                    char inputResult = inputStudentID(Classroom, searchedStudent,
+                                                      "Please enter the student's ID to be searched for: ",
+                                                      "", "The student was not found.\n");
+                }
                 if (inputResult != -1) break;
 
                 findNeighbors(Classroom, searchedStudent, 2);
 
                 break;
-            }
 
-            case CASE_REMOVE: {
+
+            case CASE_REMOVE:
                 if (!isPathKnown()){
                     printf("Please enter a logpath first at option 7.\n");
                     break;
@@ -438,27 +457,26 @@ int main() {
                     removeStudent(Classroom, rmStudent, &currentStudents);
                 }
                 break;
-            }
+
 
             case CASE_LOGPATH:
-                char wantNewPath = NULL;
+
                 if (isPathKnown()) {
-                    printf("Current path: ", logpath
-                    "\n");
+                    printf("Current path %c \n: ", *logpath);
                     printf("Do you want to create a new path? y: yes, n: no");
                     do {
-                        scanf(wantNewPath);
-                        if (wantNewPath != "y" || wantNewPath != "n") {
-                            wantNewPath = NULL;
+                        wantNewPath = getchar();
+                        if (wantNewPath != 'y' || wantNewPath != 'n') {
+                            wantNewPath = '\0';
                             printf("Invalid option!\n");
                         }
-                    } while (wantNewPath == NULL);
-                    if(wantNewPath == "y"){
+                    } while (wantNewPath == '\0');
+                    if(wantNewPath == 'y'){
                         do {
                             printf("Please enter a new logpath:\n");
-                            scanf(logpath);
+                            scanf(*logpath);
 
-                        }while(!validPath(logpath);)
+                        }while(!validPath(*logpath));
                     }
                     else{
                         break;
@@ -467,17 +485,22 @@ int main() {
                 if(!isPathKnown()){
                     do {
                         printf("Please enter a valid logpath.\n");
-                        scanf(logpath);
-                    }while(!validPath(logpath));
+                        scanf(*logpath);
+                    }while(!validPath(*logpath));
                 }
+                break;
 
             case CASE_EXIT:
                 printf("Program is exiting.\n");
                 break;
+
             default:
                 printf("Invalid option. Choose again.\n");
+                break;
         }
     } while (option != CASE_EXIT);
 
     return 0;
 }
+
+
