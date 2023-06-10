@@ -33,7 +33,7 @@ char opt1[] = "Generate seating arrangement";
 ///int [count of buffered and deleted characters] = clearStdinBuffer();
 int clearStdinBuffer() {
     int bufferedCharacters = -1;
-    int c;
+    char c;
     do {
         scanf("%c", &c);
         if (++bufferedCharacters == -1) bufferedCharacters++;
