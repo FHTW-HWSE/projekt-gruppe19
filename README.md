@@ -8,7 +8,6 @@ Sommersemester 2023
 - Jakob Reinelt (ic22b112)
 - Alexander Zink (ic22b118)
 
-
 # Requirements
 
 ## Functional:
