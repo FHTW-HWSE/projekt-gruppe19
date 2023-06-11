@@ -50,6 +50,30 @@ void test_inputStudentID() {
     classroomFree(Classroom);
 }
 
+void test_generateSeatingArrangement() {
+    // Test case: Test generateSeatingArrangment function
+    // For this test we assume the user enters 5 for rows as well as columns and wants a Chessboard-Layout
+    // The function should return the number of students that can sit in the classroom
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
+    classroom *test_classroom = classroomCreate();
+
+    unsigned short result = 13;
+    assert(result == generateSeatingArrangement(test_classroom));
+}
+
+void test_classroomAssignStudent() {
+    // Test case: Test classroomAssignStudent function
+    // For this test we assume the classroom has 5 rows, 5 columns and a Chessboard-Layout - the user wants to assign the student to seat nr. 3
+    // The function should return a 1 if the
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
+
+    classroom *test_classroom = classroomCreate();
+    unsigned short i = generateSeatingArrangement(test_classroom);
+    char result = classroomAssignStudent(test_classroom, "student1", 2);
+
+    assert(result == 1);
+}
+
 // Add more test cases for the remaining functions...
 
 int main() {
@@ -57,6 +81,8 @@ int main() {
     test_clearStdinBuffer();
     test_inputNumbers();
     test_inputStudentID();
+    test_generateSeatingArrangement();
+    test_classroomAssignStudent();
     // Call other test functions here
 
     printf("All tests passed successfully!\n");
