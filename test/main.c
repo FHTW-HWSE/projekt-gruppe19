@@ -64,7 +64,7 @@ void test_generateSeatingArrangement() {
 void test_classroomAssignStudent() {
     // Test case: Test classroomAssignStudent function
     // For this test we assume the classroom has 5 rows, 5 columns and a Chessboard-Layout - the user wants to assign the student to seat nr. 3
-    // The function should return a 1 if the
+    // The function should return a 1 if the assignment was succesful
     rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
 
     classroom *test_classroom = classroomCreate();
