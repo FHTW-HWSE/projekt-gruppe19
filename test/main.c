@@ -72,6 +72,32 @@ void test_classroomAssignStudent() {
     char result = classroomAssignStudent(test_classroom, "student1", 2);
 
     assert(result == 1);
+    assert(strcmp(test_classroom->firstSeat->nextSeat->nextSeat->student, "student1") == 0);
+}
+
+void test_classroomAppendLastSeat() {
+    // Test case: Test classroomAppendLastSeat function
+    // The user wants to assign a student to the next possible seat
+    // The function should copy the student ID into the corresponding seat
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
+    classroom *test_classroom = classroomCreate();
+    unsigned short i = generateSeatingArrangement(test_classroom);
+    char newStudent[9] = "student1";
+    classroomAppendLastSeat(test_classroom, &newStudent);
+    assert(strcmp(test_classroom->lastSeat->student, newStudent) == 0);
+}
+
+void test_classroomPrintWhole() {
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
+    char answer;
+
+    classroom *test_classroom = classroomCreate();
+    unsigned short i = generateSeatingArrangement(test_classroom);
+    classroomPrintWhole(test_classroom, rows, cols);
+    printf("This is a test for the seating arrangment print function. \n");
+    printf("Can you see a successfully printed out seating chart in the console? Answer y for yes or n for n.\n");
+    scanf("%c", &answer);
+    assert(answer == 'y');
 }
 
 // Add more test cases for the remaining functions...
@@ -83,6 +109,8 @@ int main() {
     test_inputStudentID();
     test_generateSeatingArrangement();
     test_classroomAssignStudent();
+    test_classroomAppendLastSeat();
+    test_classroomPrintWhole();
     // Call other test functions here
 
     printf("All tests passed successfully!\n");
