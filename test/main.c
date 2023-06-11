@@ -64,7 +64,7 @@ void test_generateSeatingArrangement() {
 void test_classroomAssignStudent() {
     // Test case: Test classroomAssignStudent function
     // For this test we assume the classroom has 5 rows, 5 columns and a Chessboard-Layout - the user wants to assign the student to seat nr. 3
-    // The function should return a 1 if the assignment was succesful
+    // The function should return a 1 if the assignment was successful
     rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
 
     classroom *test_classroom = classroomCreate();
@@ -88,14 +88,46 @@ void test_classroomAppendLastSeat() {
 }
 
 void test_classroomPrintWhole() {
-    rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
-    char answer;
+    // Test case: Test classroomPrintWhole function
+    // The function should put out the Layout of the classroom
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD; char answer;
 
     classroom *test_classroom = classroomCreate();
     unsigned short i = generateSeatingArrangement(test_classroom);
     classroomPrintWhole(test_classroom, rows, cols);
-    printf("This is a test for the seating arrangment print function. \n");
-    printf("Can you see a successfully printed out seating chart in the console? Answer y for yes or n for n.\n");
+    printf("This is a test for the seating arrangement print function. \n");
+    printf("Can you see a successfully printed out seating chart in the console? Answer y for yes if so.\n");
+    scanf("%c", &answer);
+    assert(answer == 'y');
+}
+
+void test_getSeatDetails() {
+    // Test case: Test getSeatDetails function
+    // The user wants to find the Seat Index for an already assigned student
+    // Function should return the seat index of the student
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
+
+    classroom *test_classroom = classroomCreate();
+    char newStudent[9] = "student1";
+    unsigned short i = generateSeatingArrangement(test_classroom);
+    char result = classroomAssignStudent(test_classroom, &newStudent, 2);
+    unsigned int seatIndex_test = getSeatDetails(test_classroom, &newStudent,&rows, &cols);
+    assert(seatIndex_test == 2);
+}
+
+void test_findNeighbors() {
+    // Test case: Test find Neighbors function
+    // The user wants to either find the direct or indirect neighbors of a specific student
+    // The function should print out the layout surrounding the student
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD; char answer;
+
+    classroom *test_classroom = classroomCreate();
+    char newStudent[9] = "student1";
+    unsigned short i = generateSeatingArrangement(test_classroom);
+    char result = classroomAssignStudent(test_classroom, &newStudent, 2);
+    findNeighbors(test_classroom, newStudent, 1);
+    printf("This is a test for the find Neighbors function. \n");
+    printf("Can you see the immdediate surroundings of Student1? Answer y for yes if so.\n");
     scanf("%c", &answer);
     assert(answer == 'y');
 }
@@ -111,6 +143,8 @@ int main() {
     test_classroomAssignStudent();
     test_classroomAppendLastSeat();
     test_classroomPrintWhole();
+    test_getSeatDetails();
+    test_findNeighbors();
     // Call other test functions here
 
     printf("All tests passed successfully!\n");
