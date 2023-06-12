@@ -152,12 +152,12 @@ void classroomPrintWhole(classroom *myClassroom, unsigned int rows, unsigned int
     FILE *file = fopen(ptr_path, "a+");
     printf("The whole seating chart:\n---front---\n");			//print the classroom board to the stdout
 
-    fprintf(file, "\nTime %sSeatingplan: \n", asctime(timeinfo));
+    fprintf(file, "\nTime %sSeating plan: \n", asctime(timeinfo));
 
     for (int i = 0; i < rows; i++) {                            //iterate through the rows
         for (int j = 0; j < cols; ++j) {                        //iterate through the columns
             printf("%s ", searchSeat->student); 				//print the current student ID to stdout
-            fprintf(file, "%s", searchSeat->student);			//printf the currend studentID to file
+            fprintf(file, "%s ", searchSeat->student);			//printf the currend studentID to file
             searchSeat = searchSeat->nextSeat;                  //step to the next seat
         }
         printf("%d\n", i + 1);									//add the column number in the end of the line

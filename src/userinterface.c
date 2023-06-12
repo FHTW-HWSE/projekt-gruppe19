@@ -15,6 +15,7 @@
 #define MAX_COLS 20
 #define CHESSBOARD 'c'
 #define FAR_SPACED 'f'
+#define SAFE 's'
 
 #define ERROR "An error occurred.\n"
 
@@ -32,7 +33,7 @@ unsigned int rows = 0;
 unsigned int cols = 0;
 char seatingArrangement;
 char log_path[201];
-char * ptr_path[201];
+char *ptr_path[201];
 char opt1[] = "Generate seating arrangement";
 
 //-----FUNCTIONS-----//
@@ -92,7 +93,7 @@ char inputStudentID(classroom *Classroom, char *newStudent, char *request,
 ///Asks for logfile path.
 ///inputLogFilePath();
 void inputLogfilePath(void) {
-    FILE * file;
+    FILE *file;
     int buffered;
     do {
         printf("Please enter a valid log path. "
@@ -113,22 +114,23 @@ void inputLogfilePath(void) {
 unsigned int calcSeat(unsigned int row, unsigned int col) {
     unsigned int seatIndex = (row - 1) * cols + col - 1;
     if ((seatingArrangement == FAR_SPACED && row & 1 && col & 1)
-        || (seatingArrangement == CHESSBOARD && !((row + col) & 1)))
+        || (seatingArrangement == CHESSBOARD && !((row + col) & 1)) || seatingArrangement == SAFE)
         return seatIndex;
     return -1;
 }
 
 ///Reads a character from stdin and saves it as the seating arrangement
-/// (global variable), which can be FAR_SPACED or CHESSBOARD.
+/// (global variable), which can be SAFE, FAR_SPACED or CHESSBOARD.
 ///inputSeatingArrangement();
 void inputSeatingArrangement(void) {
     char isValid;
     do {
-        printf("Please enter the arrangement pattern (c - chessboard; f - far spaced): ");
+        printf("Please enter the arrangement pattern (c - chessboard; f - far spaced; s - safe): ");
         scanf("%c", &seatingArrangement);
         clearStdinBuffer();
-        isValid = seatingArrangement == FAR_SPACED || seatingArrangement == CHESSBOARD;
-        if(!isValid) printf("You can't enter anything but c or f!\n");
+        isValid = seatingArrangement == FAR_SPACED || seatingArrangement == CHESSBOARD
+                  || seatingArrangement == SAFE;
+        if (!isValid) printf("You can't enter anything but c or f!\n");
     } while (!isValid);
 }
 
@@ -167,8 +169,8 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
     unsigned short result = 0;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if ((seatingArrangement == CHESSBOARD && !((i + j) & 1)) ||
-                (seatingArrangement == FAR_SPACED && !(i & 1) && !(j & 1))) {
+            if (seatingArrangement == SAFE || (seatingArrangement == CHESSBOARD && !((i + j) & 1))
+                || (seatingArrangement == FAR_SPACED && !(i & 1) && !(j & 1))) {
                 classroomAppendLastSeat(Classroom, "########");
                 result++;
             } else { classroomAppendLastSeat(Classroom, "--------"); }
@@ -186,7 +188,7 @@ void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignm
     timeinfo = localtime(&rawtime);
     printf("Current local time and date: %s", asctime(timeinfo));
 
-    FILE * file = fopen(log_path, "r+");
+    FILE *file = fopen(log_path, "r+");
     if (file == NULL) {
         fprintf(stderr, "Error, the file %s can't be opened!\n", log_path);
         return;
@@ -194,15 +196,13 @@ void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignm
 
     fseek(file, 0, SEEK_END);
 
-    if(assignment_status == '\0') {
+    if (assignment_status == '\0') {
         fprintf(file, "%s %d %s\n", asctime(timeinfo), place_ID, student_ID);
-    }
-    else if(assignment_status == 'e') {
+    } else if (assignment_status == 'e') {
         fprintf(file,
                 "The student with the ID %s has been assigned to the seat %d at %s\n",
                 student_ID, place_ID, asctime(timeinfo));
-    }
-    else if(assignment_status == 'r') {
+    } else if (assignment_status == 'r') {
         fprintf(file,
                 "The student with the ID %s has been removed from the seat %d at %s\n",
                 student_ID, place_ID, asctime(timeinfo));
@@ -306,6 +306,10 @@ int main() {
             printf("Please generate a classroom first at option 1.\n");
             continue;
         }
+        if (!currentStudents && option != 1 && option != 2 && option != 7) {
+            printf("Please add a student first at option 2.\n");
+            continue;
+        }
 
         switch (option) {
             case CASE_GENERATE:
@@ -345,7 +349,7 @@ int main() {
                     col = inputNumbers("Please enter the seat's column.",
                                        cols, 1);
                     seatNumber = calcSeat(row, col);
-                    if(seatNumber == -1) printf("You can't assign a student here!\n");
+                    if (seatNumber == -1) printf("You can't assign a student here!\n");
                 } while (seatNumber == -1);
 
                 assignSeat(Classroom, newStudent, seatNumber, row, col, &currentStudents);
@@ -403,7 +407,7 @@ int main() {
                         clearStdinBuffer();
                     } while (wantNewPath != 'y' && wantNewPath != 'n');
 
-                    if(wantNewPath == 'n') {
+                    if (wantNewPath == 'n') {
                         printf("The path remains: %s\n", log_path);
                         break;
                     }
