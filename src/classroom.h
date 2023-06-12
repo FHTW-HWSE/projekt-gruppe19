@@ -1,3 +1,8 @@
+/*       __
+*     <(o )___
+* 	   ( ._> /
+*       `---'
+*/
 //
 // CLASSROOM HEADER FILE FOR PROJEKT GRUPPE 19'S HWSE2 PROJECT (2023SS) (v1)
 //

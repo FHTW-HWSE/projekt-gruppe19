@@ -1,3 +1,9 @@
+/*
+*       __
+*     <(o )___
+* 	   ( ._> /
+*       `---'
+*/
 //-----HEADER FILES-----//
 #include <stdio.h>
 #include <string.h>
