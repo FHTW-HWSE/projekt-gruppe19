@@ -18,6 +18,7 @@
 #define SAFE 's'
 
 #define ERROR "An error occurred.\n"
+#define CURRENT_TIME "Current local time and date: %s"
 
 #define CASE_GENERATE 1
 #define CASE_ASSIGN 2
@@ -104,9 +105,18 @@ void inputLogfilePath(void) {
         if (buffered) continue;
         file = fopen(log_path, "a");
     } while (!file || buffered);
+
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    fprintf(file, "----------------------------\n"
+                  "\nTime: %sNew logging session has been started!\n", asctime(timeinfo));
     fclose(file);
 
     printf("The path is now: %s\n", log_path);
+    printf(CURRENT_TIME, asctime(timeinfo));
 }
 
 ///Calculates seat index from row and column numbers. Returns the seat index.
@@ -180,32 +190,34 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
     return result;
 }
 
-void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignment_status) {
+void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignment_status,
+                           unsigned int row, unsigned int col) {
     time_t rawtime;
     struct tm *timeinfo;
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    printf("Current local time and date: %s", asctime(timeinfo));
+    printf(CURRENT_TIME, asctime(timeinfo));
 
     FILE *file = fopen(log_path, "r+");
     if (file == NULL) {
-        fprintf(stderr, "Error, the file %s can't be opened!\n", log_path);
+        fprintf(stderr, "Error, the logfile %s can't be opened!\n", log_path);
         return;
     }
 
     fseek(file, 0, SEEK_END);
 
+    fprintf(file, "\nTime: %s", asctime(timeinfo));
     if (assignment_status == '\0') {
-        fprintf(file, "%s %d %s\n", asctime(timeinfo), place_ID, student_ID);
+        fprintf(file, "%s %d\n", student_ID, place_ID);
     } else if (assignment_status == 'e') {
         fprintf(file,
-                "The student with the ID %s has been assigned to the seat %d at %s\n",
-                student_ID, place_ID, asctime(timeinfo));
+                "Assigned student:\nThe student with the ID %s has been assigned "
+                "to the seat %d (row %d col %d).\n", student_ID, place_ID, row, col);
     } else if (assignment_status == 'r') {
         fprintf(file,
-                "The student with the ID %s has been removed from the seat %d at %s\n",
-                student_ID, place_ID, asctime(timeinfo));
+                "Removed student:\nThe student with the ID %s has been removed "
+                "from the seat %d (row %d col %d).\n", student_ID, place_ID, row, col);
     }
 
     fclose(file);
@@ -226,7 +238,7 @@ void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
         printf("Student %s has been assigned to seat %d (%d. row, %d. column).\n",
                newStudent, seatNumber,
                row, col);
-        logFileSeatAssignment(seatNumber, newStudent, 'e');
+        logFileSeatAssignment(seatNumber, newStudent, 'e', row, col);
     } else if (wasItSuccessful == 0) { printf(ERROR); }
     else { printf("The seat is already occupied.\n"); }
 }
@@ -263,7 +275,7 @@ void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoo
         printf(ERROR);
         return;
     }
-    classroomPrintPartial(Classroom, rows, cols, row, col, neighborhoodType);
+    classroomPrintPartial(Classroom, rows, cols, row, col, neighborhoodType, log_path);
 }
 
 ///Removes student from the classroom. Takes the classroom name, the ID of the student to remove,
@@ -284,7 +296,7 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
         printf("Student %s has been removed from seat %d (%d. row, %d. column).\n",
                studentToRemove, seatIndex,
                row, col);
-        logFileSeatAssignment(seatIndex, studentToRemove, 'r');
+        logFileSeatAssignment(seatIndex, studentToRemove, 'r', row, col);
     } else { printf(ERROR); }
 }
 
@@ -399,7 +411,7 @@ int main() {
             case CASE_LOG_PATH: {
                 if (strcmp(log_path, "")) {
                     printf("Current path: %s\nDo you want to change the path?"
-                           "(y - yes; n - no): ", log_path);
+                           " (y - yes; n - no): ", log_path);
 
                     char wantNewPath;
                     do {
