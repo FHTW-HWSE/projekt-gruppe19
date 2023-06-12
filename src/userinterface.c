@@ -26,6 +26,7 @@ unsigned int rows = 0;
 unsigned int cols = 0;
 char seatingArrangement;
 char log_path[201];
+char * ptr_path[201];
 char opt1[] = "Generate seating arrangement";
 
 //-----FUNCTIONS-----//
@@ -242,7 +243,6 @@ unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
                             unsigned int *row, unsigned int *col) {
     unsigned int foundSeatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
     calcRowsCols(foundSeatIndex, row, col);
-
     return foundSeatIndex;
 }
 
@@ -314,7 +314,8 @@ int main() {
                     printf("Seats arranged.\n");
                     strcpy(opt1, "Print seating chart");
                 }
-                classroomPrintWhole(Classroom, rows, cols);
+                *ptr_path = log_path;
+                classroomPrintWhole(Classroom, rows, cols, *ptr_path);
                 printf("Chart printed.\n");
                 break;
 

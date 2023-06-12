@@ -9,6 +9,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 //-----MACROS-----//
 #define ERROR "An error occurred.\n"    //error indicator generic message
@@ -24,7 +25,7 @@ typedef struct classroom {              //classroom (the chain of the linked lis
 } classroom;
 
 //-----FUNCTIONS-----//
-/// Creates a new classroom.
+/// Creates a new classroom.#################################################
 /// \return the created classroom's memory address, or 0 when failed
 classroom *classroomCreate(void) {
     classroom *newClassroom = (classroom *) malloc(sizeof(classroom));
@@ -127,25 +128,42 @@ char *classroomSearchOrdStud(classroom *myClassroom, unsigned int searchedOrd) {
 /// \param myClassroom the classroom's memory address
 /// \param rows the count of rows of the classroom
 /// \param cols the count of columns in the classroom
-void classroomPrintWhole(classroom *myClassroom, unsigned int rows, unsigned int cols) {
+void classroomPrintWhole(classroom *myClassroom, unsigned int rows, unsigned int cols, char *ptr_path) {
     seat *searchSeat = (seat *) malloc(sizeof(seat));       //allocate disk space for the stepping seat
     if (!searchSeat) {           //if failed (searchSeat is null pointer)...
         printf(ERROR);   //print the default error message to the stdout
         return;                 //exit the function
     }
 
-    searchSeat = myClassroom->firstSeat;                        //start the search with the classroom's first seat
+    time_t rawtime;
+    struct tm *timeinfo;
 
-    printf("The whole seating chart:\n---front---\n");    //print the classroom board to the stdout
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    printf("Current local time and date: %s", asctime(timeinfo));
+
+
+    searchSeat = myClassroom->firstSeat;                        //start the search with the classroom's first seat
+    FILE *file = fopen(ptr_path, "a+");
+    printf("The whole seating chart:\n---front---\n");			//print the classroom board to the stdout
+
+    fprintf(file, "\nTime %sSeatingplan: \n", asctime(timeinfo));
+
     for (int i = 0; i < rows; i++) {                            //iterate through the rows
         for (int j = 0; j < cols; ++j) {                        //iterate through the columns
-            printf("%s ", searchSeat->student);          //print the current student ID to stdout
+            printf("%s ", searchSeat->student); 				//print the current student ID to stdout
+            fprintf(file, "%s", searchSeat->student);			//printf the currend studentID to file
             searchSeat = searchSeat->nextSeat;                  //step to the next seat
         }
-        printf("%d\n", i + 1);                           //add the column number in the end of the line
+        printf("%d\n", i + 1);									//add the column number in the end of the line
+        fprintf(file, "%d\n", i+1);								//add the column number to the end of the line in file
     }
-    for (int j = 0; j < cols; j++) printf("%2d       ", j + 1); //add the row numbers in the end
-    printf("\n");                                         //insert a new line
+    for (int j = 0; j < cols; j++){ printf("%2d       ", j + 1); //add the row numbers in the end
+        fprintf(file, "%2d       ", j + 1);}						//print row numbers to file
+    printf("\n");												//insert a new line
+    fprintf(file, "\n");										//inser new line in file
+    fprintf(file, "------------------------------------------------------------------------------------");
+    fclose(file);
 }
 
 /// Lists a seat's neighborhood in the classroom.
