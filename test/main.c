@@ -18,8 +18,9 @@ void test_clearStdinBuffer() {
     // Test case: Test clearing the input buffer
     // Assuming the input buffer has 5 characters: "Hello"
     // The function should clear the buffer and return 5
-
+    printf("This is a test for clearing the input buffer. Please type 'Hello': ");
     int bufferedCharacters = clearStdinBuffer();
+
     assert(bufferedCharacters == 5);
 }
 
@@ -28,7 +29,7 @@ void test_inputNumbers() {
     // Assuming the user enters a number between 1 and 10
     // The function should return the entered number
 
-    unsigned int result = inputNumbers("Please enter a number between 1 and 10: ", 10, 1);
+    unsigned int result = inputNumbers("This is a test for the input of numbers.", 10, 1);
     assert(result >= 1 && result <= 10);
 }
 
@@ -41,7 +42,7 @@ void test_inputStudentID() {
 
     char newStudent[9] = "student1";
     char result = inputStudentID(Classroom, newStudent, "Please enter a student ID: ",
-                                "Student already exists.\n", "Student not found.\n");
+                                 "Student already exists.\n", "Student not found.\n");
     assert(result == 1);
 
     // Clean up
@@ -51,7 +52,7 @@ void test_inputStudentID() {
 }
 
 void test_generateSeatingArrangement() {
-    // Test case: Test generateSeatingArrangment function
+    // Test case: Test generateSeatingArrangement function
     // For this test we assume the user enters 5 for rows as well as columns and wants a Chessboard-Layout
     // The function should return the number of students that can sit in the classroom
     rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
@@ -97,7 +98,7 @@ void test_classroomPrintWhole() {
     classroomPrintWhole(test_classroom, rows, cols);
     printf("This is a test for the seating arrangement print function. \n");
     printf("Can you see a successfully printed out seating chart in the console? Answer y for yes if so.\n");
-    scanf("%c", &answer);
+    scanf(" %c", &answer);
     assert(answer == 'y');
 }
 
@@ -127,8 +128,8 @@ void test_findNeighbors() {
     char result = classroomAssignStudent(test_classroom, &newStudent, 2);
     findNeighbors(test_classroom, newStudent, 1);
     printf("This is a test for the find Neighbors function. \n");
-    printf("Can you see the immdediate surroundings of Student1? Answer y for yes if so.\n");
-    scanf("%c", &answer);
+    printf("Can you see the immediate surroundings of Student1? Answer y for yes if so.\n");
+    scanf(" %c", &answer);
     assert(answer == 'y');
 }
 
