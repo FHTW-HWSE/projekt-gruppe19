@@ -93,30 +93,33 @@ char inputStudentID(classroom *Classroom, char *newStudent, char *request,
 
 ///Asks for logfile path.
 ///inputLogFilePath();
-void inputLogfilePath(void) {
+void inputFilePath(char *path) {
     FILE *file;
     int buffered;
     do {
-        printf("Please enter a valid log path. "
+        printf("Please enter a valid file path. "
                "If it doesn't exist yet, it will be created.\n");
-        scanf("%200s", log_path);
-        printf("Given input: %s\n", log_path);
+        scanf("%200s", path);
         buffered = clearStdinBuffer();
         if (buffered) continue;
-        file = fopen(log_path, "a");
+        file = fopen(path, "a");
     } while (!file || buffered);
 
-    time_t rawtime;
-    struct tm *timeinfo;
+    if (!strcmp(log_path, path)) {
+        time_t rawtime;
+        struct tm *timeinfo;
 
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    fprintf(file, "----------------------------\n"
-                  "\nTime: %sNew logging session has been started!\n", asctime(timeinfo));
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+
+        fprintf(file, "----------------------------\n"
+                      "\nTime: %sNew logging session has been started!\n", asctime(timeinfo));
+
+        printf("The path is now: %s\n", log_path);
+        printf(CURRENT_TIME, asctime(timeinfo));
+    }
+
     fclose(file);
-
-    printf("The path is now: %s\n", log_path);
-    printf(CURRENT_TIME, asctime(timeinfo));
 }
 
 ///Calculates seat index from row and column numbers. Returns the seat index.
@@ -197,7 +200,6 @@ void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignm
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);
-    printf(CURRENT_TIME, asctime(timeinfo));
 
     FILE *file = fopen(log_path, "r+");
     if (file == NULL) {
@@ -209,15 +211,22 @@ void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignm
 
     fprintf(file, "\nTime: %s", asctime(timeinfo));
     if (assignment_status == '\0') {
+        printf(CURRENT_TIME, asctime(timeinfo));
         fprintf(file, "%s %d\n", student_ID, place_ID);
     } else if (assignment_status == 'e') {
+        printf(CURRENT_TIME, asctime(timeinfo));
         fprintf(file,
                 "Assigned student:\nThe student with the ID %s has been assigned "
                 "to the seat %d (row %d col %d).\n", student_ID, place_ID, row, col);
     } else if (assignment_status == 'r') {
+        printf(CURRENT_TIME, asctime(timeinfo));
         fprintf(file,
                 "Removed student:\nThe student with the ID %s has been removed "
                 "from the seat %d (row %d col %d).\n", student_ID, place_ID, row, col);
+    } else if (assignment_status == 's') {
+        fprintf(file,
+                "Queried student:\nA student's surroundings have been saved "
+                "to the following file: %s\n", student_ID);
     }
 
     fclose(file);
@@ -268,14 +277,14 @@ unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
 /// student's ID and the neighborhood type, which can be 1 (direct neighbors) or 2
 /// (indirect neighbors too).
 ///findNeighbors([the classroom's name], [the searched student's ID], [neighborhood type]);
-void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoodType) {
+void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoodType, char *file_path) {
     unsigned int row, col;
     unsigned int seatIndex = getSeatDetails(Classroom, searchedStudent, &row, &col);
     if (seatIndex == -1) {
         printf(ERROR);
         return;
     }
-    classroomPrintPartial(Classroom, rows, cols, row, col, neighborhoodType, log_path);
+    classroomPrintPartial(Classroom, rows, cols, row, col, neighborhoodType, file_path);
 }
 
 ///Removes student from the classroom. Takes the classroom name, the ID of the student to remove,
@@ -369,6 +378,20 @@ int main() {
                 break;
             }
             case CASE_SAVE: {
+                char sStudent[9];
+                char inputResult = inputStudentID(
+                        Classroom,
+                        sStudent,
+                        "Please enter the student ID you would like to query.",
+                        "", "The student was not found.\n");
+                if (inputResult != -1) break;
+
+                char file_path[201];
+
+                inputFilePath(file_path);
+
+                findNeighbors(Classroom, sStudent, 2, file_path);
+                logFileSeatAssignment(0, file_path, 's', 0, 0);
                 break;
             }
             case CASE_DIRECT_NEIGHBORS: {
@@ -378,7 +401,7 @@ int main() {
                                                   "", "The student was not found.\n");
                 if (inputResult != -1) break;
 
-                findNeighbors(Classroom, searchedStudent, 1);
+                findNeighbors(Classroom, searchedStudent, 1, log_path);
 
                 break;
             }
@@ -389,7 +412,7 @@ int main() {
                                                   "", "The student was not found.\n");
                 if (inputResult != -1) break;
 
-                findNeighbors(Classroom, searchedStudent, 2);
+                findNeighbors(Classroom, searchedStudent, 2, log_path);
 
                 break;
             }
@@ -424,11 +447,11 @@ int main() {
                         break;
                     }
 
-                    inputLogfilePath();
+                    inputFilePath(log_path);
                     break;
                 }
 
-                inputLogfilePath();
+                inputFilePath(log_path);
                 break;
             }
 
