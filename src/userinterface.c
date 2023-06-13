@@ -38,8 +38,8 @@ char *ptr_path[201];
 char opt1[] = "Generate seating arrangement";
 
 //-----FUNCTIONS-----//
-///Clears input buffer. Must used to avoid input type mismatches of scanf function.
-///int [count of buffered and deleted characters] = clearStdinBuffer();
+/// Clears input buffer. Must used to avoid input type mismatches of scanf function.
+/// \return the amount of buffered characters
 int clearStdinBuffer() {
     int bufferedCharacters = -1;
     char c;
@@ -51,11 +51,11 @@ int clearStdinBuffer() {
     return bufferedCharacters;
 }
 
-///Reads numbers from stdin. It needs the string it will ask for the numbers with,
-/// the maximum and the minimum of the numbers that can be entered. Returns with the number
-/// received from the user.
-///int userInputNumber = inputNumbers([String like "Please input a number here: "],
-/// [max value to enter], [min value to enter]);
+/// Reads numbers from Stdin.
+/// \param request the string to ask for the input with
+/// \param upperLimit the possibly highest number to enter
+/// \param lowerLimit the possibly lowest number to enter
+/// \return the entered number
 int inputNumbers(char *request, unsigned int upperLimit, unsigned int lowerLimit) {
     int result;
     do {
@@ -68,7 +68,13 @@ int inputNumbers(char *request, unsigned int upperLimit, unsigned int lowerLimit
     return result;
 }
 
-///Asks for student ID and checks whether it is existing or not.
+/// Asks for student ID and checks whether it already exists in the classroom.
+/// \param Classroom the classroom's memory address
+/// \param newStudent the student's 8-digit ID
+/// \param request the string to ask for the input with
+/// \param found the string to print to Stdout if the student was found
+/// \param notFound the string to print to Stdout if the student was not found
+/// \return 1 when the student was found, -1  when the student was not found, 0 when failed
 char inputStudentID(classroom *Classroom, char *newStudent, char *request,
                     char *found, char *notFound) {
     char isValid;
@@ -91,8 +97,8 @@ char inputStudentID(classroom *Classroom, char *newStudent, char *request,
     return result;
 }
 
-///Asks for logfile path.
-///inputLogFilePath();
+/// Asks for file path.
+/// \param path the memory address to store the path at
 void inputFilePath(char *path) {
     FILE *file;
     int buffered;
@@ -122,8 +128,10 @@ void inputFilePath(char *path) {
     fclose(file);
 }
 
-///Calculates seat index from row and column numbers. Returns the seat index.
-///unsigned int [the seat index' variable name] = calcSeat([row], [col]);
+/// Calculates seat index from row and column numbers.
+/// \param row the row of the seat (1 is the first row)
+/// \param col the column of the seat (1 is the first column)
+/// \return the index of the seat (0 is the first seat)
 unsigned int calcSeat(unsigned int row, unsigned int col) {
     unsigned int seatIndex = (row - 1) * cols + col - 1;
     if ((seatingArrangement == FAR_SPACED && row & 1 && col & 1)
@@ -132,9 +140,8 @@ unsigned int calcSeat(unsigned int row, unsigned int col) {
     return -1;
 }
 
-///Reads a character from stdin and saves it as the seating arrangement
-/// (global variable), which can be SAFE, FAR_SPACED or CHESSBOARD.
-///inputSeatingArrangement();
+/// Reads a character from stdin and saves it as the seating arrangement (global variable),
+/// which can be SAFE, FAR_SPACED or CHESSBOARD.
 void inputSeatingArrangement(void) {
     char isValid;
     do {
@@ -147,11 +154,11 @@ void inputSeatingArrangement(void) {
     } while (!isValid);
 }
 
-///Calculates rows and columns (both starting from 1) from the received seat number
-/// (seat index, which is 0 for the first seat). It writes the value into the original
-/// variables through pointers, so it takes the original variables' memory address.
-///calcRowsCols([the seat number], [the memory address of the variable containing the
-/// specific row], [similar memory address for the column]);
+/// Calculates rows and columns from the received seat index. It writes the value into the original
+/// variables through pointers.
+/// \param seatIndex the seat's index (0 is the first seat)
+/// \param row the seat's row's memory address (1 is the first row)
+/// \param col the seat's column's memory address (1 is the first column)
 void calcRowsCols(unsigned int seatIndex, unsigned int *row, unsigned int *col) {
     *col = seatIndex % cols + 1;
     if (!*col) *col += cols - 1;
@@ -159,8 +166,7 @@ void calcRowsCols(unsigned int seatIndex, unsigned int *row, unsigned int *col) 
     if (!seatIndex % cols) (*row)--;
 }
 
-///Displays the main menu.
-///displayMenu();
+/// Displays the main menu.
 void displayMenu() {
     printf("\nMenu:\n");
     printf("1. %s\n", opt1);
@@ -174,10 +180,9 @@ void displayMenu() {
     printf("Enter your choice: ");
 }
 
-///Generates the seating arrangement, using the rows' and columns' global variables.
-/// Takes the classroom to fill. returns with the maximal number of students to be
-/// assigned safely in the room.
-///unsigned short [max people] = generateSeatingArrangement([name of classroom]);
+/// Generates the seating arrangement of a classroom, using the rows' and columns' global variables.
+/// \param Classroom the classroom's memory address
+/// \return the amount of safe seats
 unsigned short generateSeatingArrangement(classroom *Classroom) {
     unsigned short result = 0;
     for (int i = 0; i < rows; ++i) {
@@ -193,6 +198,12 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
     return result;
 }
 
+/// Logs the events of options 2, 3, 6.
+/// \param place_ID index of the student's seat (0 is the first seat)
+/// \param student_ID the student ID
+/// \param assignment_status e for assigned student, r for removed student, s for saved student
+/// \param row the row of the student's seat (1 is the first row)
+/// \param col the column of the student's seat (1 is the first column)
 void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignment_status,
                            unsigned int row, unsigned int col) {
     time_t rawtime;
@@ -232,11 +243,13 @@ void logFileSeatAssignment(unsigned int place_ID, char *student_ID, char assignm
     fclose(file);
 }
 
-///Assigns a student to a seat. Takes the classroom, the student ID, the seat's number,
-/// the seat's row and column and the address of the variable which stores the amount
-/// of students assigned to the room.
-///assignSeat([name of classroom], [ID of student to be assigned], [seat's index],
-/// [seat's row], [seat's column], [the address of the current student's count variable]);
+/// Assigns a student to a seat in the classroom.
+/// \param Classroom the classroom's memory address
+/// \param newStudent the student's 8-digit ID
+/// \param seatNumber the seat's index (0 is the first seat)
+/// \param row the seat's row (1 is the first row)
+/// \param col the seat's column (1 is the first column)
+/// \param currentStudents the amount of the currently already assigned students
 void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
                 unsigned int row, unsigned int col, unsigned short *currentStudents) {
     char wasItSuccessful = classroomAssignStudent(Classroom,
@@ -252,20 +265,13 @@ void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
     else { printf("The seat is already occupied.\n"); }
 }
 
-/*
-void saveStudentInfo(Student* student, FILE* file) {
-    // Implementation for saving student information to a file
-    // ...
-}
-*/
-
-///Gets the rows and columns of a specific student's seat. Takes the classroom to search in,
-/// the student to search for, and the memory addresses of the external rows and columns to write,
-/// the values into them. Returns the seat index it has found (and technically, the row and column
-/// numbers through the pointers).
-///unsigned int [the seat number's variable that receives the value] =
-/// getSeatDetails([classroom's name], [student ID], address of the rows that receives the value],
-/// [address of the column that receives the value]);
+/// Gets the row, column and index of a specific student's seat in the classroom.
+/// To store the row and column, pointers are used.
+/// \param Classroom the classroom's memory address
+/// \param searchedStudent the student's 8-digit ID
+/// \param row the seat's row (1 is the first row)
+/// \param col the seat's column (1 is the first column)
+/// \return the seat's index (0 is the first seat)
 unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
                             unsigned int *row, unsigned int *col) {
     unsigned int foundSeatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
@@ -273,10 +279,11 @@ unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
     return foundSeatIndex;
 }
 
-///Prints the surroundings of a specific student. Takes the name of the classroom, the searched
-/// student's ID and the neighborhood type, which can be 1 (direct neighbors) or 2
-/// (indirect neighbors too).
-///findNeighbors([the classroom's name], [the searched student's ID], [neighborhood type]);
+/// Prints the surroundings of a specific student in the classroom.
+/// \param Classroom the classroom's memory address
+/// \param searchedStudent the student's 8-digit ID
+/// \param neighborhoodType 1: only the student and their direct neighbors; 2: the indirect neighbors too
+/// \param file_path the file's path where it will be stored
 void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoodType, char *file_path) {
     unsigned int row, col;
     unsigned int seatIndex = getSeatDetails(Classroom, searchedStudent, &row, &col);
@@ -287,9 +294,10 @@ void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoo
     classroomPrintPartial(Classroom, rows, cols, row, col, neighborhoodType, file_path);
 }
 
-///Removes student from the classroom. Takes the classroom name, the ID of the student to remove,
-/// and the memory address of the variable containing the currently assigned students.
-///removeStudent([name of the classroom], [student ID to remove], [current students variable's address]);
+/// Removes student from the classroom.
+/// \param Classroom the classroom's memory address
+/// \param studentToRemove the student's 8-digit ID
+/// \param currentStudents the amount of the currently already assigned students
 void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *currentStudents) {
     unsigned int row, col;
     unsigned int seatIndex = getSeatDetails(Classroom, studentToRemove, &row, &col);
@@ -309,6 +317,7 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
     } else { printf(ERROR); }
 }
 
+/// Here starts the program.
 int main() {
     classroom *Classroom = classroomCreate();
     int option = -1;
