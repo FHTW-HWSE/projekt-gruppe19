@@ -339,6 +339,7 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
     }
 }
 
+#ifndef TEST
 /// Here starts the program.
 int main() {
     classroom *Classroom = classroomCreate();
@@ -510,3 +511,4 @@ int main() {
 
     return 0;
 }
+#endif
