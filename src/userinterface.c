@@ -402,9 +402,9 @@ int main() {
                 unsigned int row, col, seatNumber;
 
                 do {
-                    row = inputNumbers("Please enter the seat's row.",
+                    row = inputNumbers("Please enter the seats row.",
                                        rows, 1);
-                    col = inputNumbers("Please enter the seat's column.",
+                    col = inputNumbers("Please enter the seats column.",
                                        cols, 1);
                     seatNumber = calcSeat(row, col);
                     if (seatNumber == -1) {
@@ -438,7 +438,7 @@ int main() {
             case CASE_DIRECT_NEIGHBORS: {
                 char studentToSearch[9];
                 char inputResult = inputStudentID(Classroom, studentToSearch,
-                                                  "Please enter the student's ID to be searched for.",
+                                                  "Please enter the students ID to be searched for.",
                                                   "", "The student was not found.\n");
                 if (inputResult != -1) {
                     break;
@@ -451,7 +451,7 @@ int main() {
             case CASE_INDIRECT_NEIGHBORS: {
                 char studentToSearch[9];
                 char inputResult = inputStudentID(Classroom, studentToSearch,
-                                                  "Please enter the student's ID to be searched for.",
+                                                  "Please enter the students ID to be searched for.",
                                                   "", "The student was not found.\n");
                 if (inputResult != -1) {
                     break;
