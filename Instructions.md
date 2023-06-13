@@ -13,4 +13,4 @@ To run the tests you need to include the main.c from the same folder.
 
 Execute the according programs in the terminal with:
 
-    ./"programname"
+    './"programname"
