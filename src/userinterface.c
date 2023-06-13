@@ -193,9 +193,6 @@ void calcRowsCols(unsigned int seatIndex, unsigned int *row, unsigned int *col) 
         *col += cols - 1;
     }
     *row = seatIndex / cols + 1;
-    if (!seatIndex % cols) {
-        (*row)--;
-    }
 }
 
 /// Displays the main menu.
