@@ -1,18 +1,9 @@
+#define TEST
+#include "userface.c"
 #include <stdio.h>
 #include <assert.h>
 #include "classroom.h"
 
-// Function prototypes for the missing functions
-// Replace the function prototypes with the actual implementations
-
-unsigned short generateSeatingArrangement(classroom *Classroom);
-int classroomCheckStudent(classroom *Classroom, char *studentID);
-void classroomAppendLastSeat(classroom *Classroom, char *seat);
-char classroomAssignStudent(classroom *Classroom, char *studentID, unsigned int seatNumber);
-unsigned int classroomSearchStudOrd(classroom *Classroom, char *studentID);
-void classroomPrintPartial(classroom *Classroom, unsigned int rows, unsigned int cols, unsigned int row, unsigned int col, char neighborhoodType);
-char classroomRemoveStudent(classroom *Classroom, unsigned int seatIndex);
-classroom* classroomCreate();
 
 void test_clearStdinBuffer() {
     // Test case: Test clearing the input buffer
@@ -45,10 +36,6 @@ void test_inputStudentID() {
                                  "Student already exists.\n", "Student not found.\n");
     assert(result == 1);
 
-    // Clean up
-    // Assuming there is a function to free the memory allocated for the classroom
-    // Replace classroomFree() with the actual function
-    classroomFree(Classroom);
 }
 
 void test_generateSeatingArrangement() {
@@ -69,7 +56,7 @@ void test_classroomAssignStudent() {
     rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
 
     classroom *test_classroom = classroomCreate();
-    unsigned short i = generateSeatingArrangement(test_classroom);
+    generateSeatingArrangement(test_classroom);
     char result = classroomAssignStudent(test_classroom, "student1", 2);
 
     assert(result == 1);
@@ -82,9 +69,9 @@ void test_classroomAppendLastSeat() {
     // The function should copy the student ID into the corresponding seat
     rows = 5; cols = 5; seatingArrangement = CHESSBOARD;
     classroom *test_classroom = classroomCreate();
-    unsigned short i = generateSeatingArrangement(test_classroom);
+    generateSeatingArrangement(test_classroom);
     char newStudent[9] = "student1";
-    classroomAppendLastSeat(test_classroom, &newStudent);
+    classroomAppendLastSeat(test_classroom, (char*)&newStudent);
     assert(strcmp(test_classroom->lastSeat->student, newStudent) == 0);
 }
 
@@ -92,10 +79,11 @@ void test_classroomPrintWhole() {
     // Test case: Test classroomPrintWhole function
     // The function should put out the Layout of the classroom
     rows = 5; cols = 5; seatingArrangement = CHESSBOARD; char answer;
+    char filePath[201] = "Test";
 
     classroom *test_classroom = classroomCreate();
-    unsigned short i = generateSeatingArrangement(test_classroom);
-    classroomPrintWhole(test_classroom, rows, cols);
+    generateSeatingArrangement(test_classroom);
+    classroomPrintWhole(test_classroom, rows, cols, filePath);
     printf("This is a test for the seating arrangement print function. \n");
     printf("Can you see a successfully printed out seating chart in the console? Answer y for yes if so.\n");
     scanf(" %c", &answer);
@@ -110,9 +98,9 @@ void test_getSeatDetails() {
 
     classroom *test_classroom = classroomCreate();
     char newStudent[9] = "student1";
-    unsigned short i = generateSeatingArrangement(test_classroom);
-    char result = classroomAssignStudent(test_classroom, &newStudent, 2);
-    unsigned int seatIndex_test = getSeatDetails(test_classroom, &newStudent,&rows, &cols);
+    generateSeatingArrangement(test_classroom);
+    classroomAssignStudent(test_classroom, (char*) &newStudent, 2);
+    unsigned int seatIndex_test = getSeatDetails(test_classroom, (char*) &newStudent,&rows, &cols);
     assert(seatIndex_test == 2);
 }
 
@@ -121,18 +109,68 @@ void test_findNeighbors() {
     // The user wants to either find the direct or indirect neighbors of a specific student
     // The function should print out the layout surrounding the student
     rows = 5; cols = 5; seatingArrangement = CHESSBOARD; char answer;
-
+    char filePath[201] = "Test";
     classroom *test_classroom = classroomCreate();
     char newStudent[9] = "student1";
-    unsigned short i = generateSeatingArrangement(test_classroom);
-    char result = classroomAssignStudent(test_classroom, &newStudent, 2);
-    findNeighbors(test_classroom, newStudent, 1);
+    generateSeatingArrangement(test_classroom);
+    classroomAssignStudent(test_classroom, (char*) &newStudent, 2);
+    findNeighbors(test_classroom, newStudent, 1, filePath);
     printf("This is a test for the find Neighbors function. \n");
     printf("Can you see the immediate surroundings of Student1? Answer y for yes if so.\n");
     scanf(" %c", &answer);
     assert(answer == 'y');
 }
+void test_incorrectvalues_dimensions() {
+    // Test case: Incorrect values for dimension
+    // This should test if the user can retry if he enters wrong dimensions for the input
+    char answer; seatingArrangement = CHESSBOARD;
+    classroom *test_classroom = classroomCreate();
+    printf("This is a test for the input of dimensions. Please try to enter wrong inputs, the program should always allow you to try again.\n");
+    rows = inputNumbers("Please enter the number of rows.",
+                        MAX_ROWS, 1);
+    cols = inputNumbers("Please enter the number of columns.",
+                        MAX_COLS, 1);
 
+
+    generateSeatingArrangement(test_classroom);
+    printf("Were you able to retry all the inputs? Answer y for yes if so.\n");
+    scanf(" %c", &answer);
+    assert(answer == 'y');
+}
+
+void test_studentalreadyassigned() {
+    // Test case: Student ID already assigned
+    // This tests whether the program stops you from assigning new student when the room is already full
+    rows = 5; cols = 5; seatingArrangement = CHESSBOARD; char newStudent[9]; unsigned short countOfCurrentStudents = 0;
+
+    printf("This is a test about assigning a student ID that is already assigned.\n");
+    printf("There is already a classroom with 5 rows and 5 columns generated.\n");
+    classroom *test_classroom = classroomCreate();
+    generateSeatingArrangement(test_classroom);
+
+    for(int i = 0; i < 2; i++) {
+        inputStudentID(test_classroom, newStudent,
+                       "Please enter the student ID you would like to assign.",
+                       "The student is already assigned.\n", "");
+
+        unsigned int row, col, seatNumber;
+
+        do {
+            row = inputNumbers("Please enter the seat's row.",
+                               rows, 1);
+            col = inputNumbers("Please enter the seat's column.",
+                               cols, 1);
+            seatNumber = calcSeat(row, col);
+            if (seatNumber == -1) {
+                printf("You can't assign a student here!\n");
+            }
+        } while (seatNumber == -1);
+
+        assignSeat(test_classroom, newStudent, seatNumber, row, col, &countOfCurrentStudents);
+    }
+    //assert(strcmp(searchSeat->student, expectedStudent) == 0);
+
+}
 // Add more test cases for the remaining functions...
 
 int main() {
@@ -142,10 +180,12 @@ int main() {
     test_inputStudentID();
     test_generateSeatingArrangement();
     test_classroomAssignStudent();
-    test_classroomAppendLastSeat();
-    test_classroomPrintWhole();
     test_getSeatDetails();
+    test_classroomPrintWhole();
+    test_classroomAppendLastSeat();
     test_findNeighbors();
+    test_incorrectvalues_dimensions();
+    test_studentalreadyassigned();
     // Call other test functions here
 
     printf("All tests passed successfully!\n");
