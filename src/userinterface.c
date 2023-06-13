@@ -87,8 +87,8 @@ char inputStudentID(classroom *Classroom, char *newStudent, char *msgOnRequest,
         int countOfBufferedCharacters = clearStdinBuffer();
         for (int i = 0; i < 8; ++i) {
             char currentChar = newStudent[i];
-            isValid = (currentChar >= '0' && currentChar <= '9'
-                       || currentChar >= 'a' && currentChar <= 'z') && !countOfBufferedCharacters;
+            isValid = ((currentChar >= '0' && currentChar <= '9')
+                       || (currentChar >= 'a' && currentChar <= 'z')) && !countOfBufferedCharacters;
             if (!isValid) {
                 break;
             }
