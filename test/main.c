@@ -1,5 +1,5 @@
 #define TEST
-#include "userface.c"
+#include "userinterface.c"
 #include <stdio.h>
 #include <assert.h>
 #include "classroom.h"
