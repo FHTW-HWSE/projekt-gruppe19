@@ -148,10 +148,10 @@ void inputSeatingArrangement(void) {
     do {
         printf("Please enter the arrangement pattern (c - chessboard; f - far spaced; s - safe): ");
         scanf("%c", &seatingArrangement);
-        clearStdinBuffer();
-        isValid = seatingArrangement == FAR_SPACED || seatingArrangement == CHESSBOARD
-                  || seatingArrangement == SAFE;
-        if (!isValid) printf("You can't enter anything but c or f!\n");
+        int buffered = clearStdinBuffer();
+        isValid = (seatingArrangement == FAR_SPACED || seatingArrangement == CHESSBOARD
+                  || seatingArrangement == SAFE) && !buffered;
+        if (!isValid) printf("You can't enter anything but s, c or f!\n");
     } while (!isValid);
 }
 
