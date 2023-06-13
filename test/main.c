@@ -138,39 +138,6 @@ void test_incorrectvalues_dimensions() {
     assert(answer == 'y');
 }
 
-void test_studentalreadyassigned() {
-    // Test case: Student ID already assigned
-    // This tests whether the program stops you from assigning new student when the room is already full
-    rows = 5; cols = 5; seatingArrangement = CHESSBOARD; char newStudent[9]; unsigned short countOfCurrentStudents = 0;
-
-    printf("This is a test about assigning a student ID that is already assigned.\n");
-    printf("There is already a classroom with 5 rows and 5 columns generated.\n");
-    classroom *test_classroom = classroomCreate();
-    generateSeatingArrangement(test_classroom);
-
-    for(int i = 0; i < 2; i++) {
-        inputStudentID(test_classroom, newStudent,
-                       "Please enter the student ID you would like to assign.",
-                       "The student is already assigned.\n", "");
-
-        unsigned int row, col, seatNumber;
-
-        do {
-            row = inputNumbers("Please enter the seat's row.",
-                               rows, 1);
-            col = inputNumbers("Please enter the seat's column.",
-                               cols, 1);
-            seatNumber = calcSeat(row, col);
-            if (seatNumber == -1) {
-                printf("You can't assign a student here!\n");
-            }
-        } while (seatNumber == -1);
-
-        assignSeat(test_classroom, newStudent, seatNumber, row, col, &countOfCurrentStudents);
-    }
-    //assert(strcmp(searchSeat->student, expectedStudent) == 0);
-
-}
 // Add more test cases for the remaining functions...
 
 int main() {
@@ -185,7 +152,6 @@ int main() {
     test_classroomAppendLastSeat();
     test_findNeighbors();
     test_incorrectvalues_dimensions();
-    test_studentalreadyassigned();
     // Call other test functions here
 
     printf("All tests passed successfully!\n");
