@@ -38,10 +38,10 @@ char logPath[201];
 char opt1[] = "Generate seating arrangement";
 
 //-----FUNCTIONS-----//
-/**
- * @brief Clears the input buffer to avoid input type mismatches.
- * @return The number of buffered characters.
- */
+
+/// @brief Clears the input buffer to avoid input type mismatches.
+/// @return The number of buffered characters.
+
 int clearStdinBuffer() {
     int countOfBufferedCharacters = -1;
     char bufferedCharacter;
@@ -55,13 +55,13 @@ int clearStdinBuffer() {
     return countOfBufferedCharacters;
 }
 
-/**
- * @brief Asks the user to input a number within the specified range.
- * @param msgOnRequest The message displayed when requesting the input.
- * @param upperLimit The maximum allowed number.
- * @param lowerLimit The minimum allowed number.
- * @return The entered number.
- */
+
+/// @brief Asks the user to input a number within the specified range.
+/// @param msgOnRequest The message displayed when requesting the input.
+/// @param upperLimit The maximum allowed number.
+/// @param lowerLimit The minimum allowed number.
+/// @return The entered number.
+
 int inputNumbers(char *msgOnRequest, unsigned int upperLimit, unsigned int lowerLimit) {
     int enteredNumber;
     do {
@@ -74,15 +74,15 @@ int inputNumbers(char *msgOnRequest, unsigned int upperLimit, unsigned int lower
     return enteredNumber;
 }
 
-/**
- * @brief Asks the user to input a student ID and checks if it already exists in the classroom.
- * @param Classroom Pointer to the `classroom` data structure.
- * @param newStudent Buffer to store the entered student ID.
- * @param msgOnRequest The message displayed when requesting the input.
- * @param msgOnFound The message displayed if the student is found in the classroom.
- * @param msgOnNotFound The message displayed if the student is not found in the classroom.
- * @return 1 if the student is found, -1 if the student is not found, and 0 if an error occurs.
- */
+
+/// @brief Asks the user to input a student ID and checks if it already exists in the classroom.
+/// @param Classroom Pointer to the `classroom` data structure.
+/// @param newStudent Buffer to store the entered student ID.
+/// @param msgOnRequest The message displayed when requesting the input.
+/// @param msgOnFound The message displayed if the student is found in the classroom.
+/// @param msgOnNotFound The message displayed if the student is not found in the classroom.
+/// @return 1 if the student is found, -1 if the student is not found, and 0 if an error occurs.
+
 char inputStudentID(classroom *Classroom, char *newStudent, char *msgOnRequest,
                     char *msgOnFound, char *msgOnNotFound) {
     char isValid;
@@ -112,10 +112,10 @@ char inputStudentID(classroom *Classroom, char *newStudent, char *msgOnRequest,
     return result;
 }
 
-/**
- * @brief Asks the user to input a file path and checks if the file can be opened.
- * @param path Buffer to store the entered file path.
- */
+
+/// @brief Asks the user to input a file path and checks if the file can be opened.
+/// @param path Buffer to store the entered file path.
+
 void inputFilePath(char *path) {
     FILE *file = NULL;
     int countOfBufferedCharacters;
@@ -146,12 +146,12 @@ void inputFilePath(char *path) {
     fclose(file);
 }
 
-/**
- * @brief Calculates the seat index from the row and column numbers based on the seating arrangement.
- * @param row The row of the seat (1 is the first row).
- * @param col The column of the seat (1 is the first column).
- * @return The seat index.
- */
+
+/// @brief Calculates the seat index from the row and column numbers based on the seating arrangement.
+/// @param row The row of the seat (1 is the first row).
+/// @param col The column of the seat (1 is the first column).
+/// @return The seat index.
+
 unsigned int calcSeat(unsigned int row, unsigned int col) {
     unsigned int seatIndex = (row - 1) * cols + col - 1;
     if ((seatingArrangement == FAR_SPACED && row & 1 && col & 1)
@@ -160,12 +160,12 @@ unsigned int calcSeat(unsigned int row, unsigned int col) {
     return -1;
 }
 
-/**
-    @brief Reads a character from stdin and saves it as the seating arrangement.
-    This function prompts the user to enter a character representing the seating arrangement pattern
-    (SAFE, FAR_SPACED, or CHESSBOARD) and saves it in the global variable 'seatingArrangement'.
-    It continues to prompt until a valid input is provided.
-    */
+
+///     @brief Reads a character from stdin and saves it as the seating arrangement
+/// This function prompts the user to enter a character representing the seating arrangement pattern
+/// (SAFE, FAR_SPACED, or CHESSBOARD) and saves it in the global variable 'seatingArrangement'.
+/// It continues to prompt until a valid input is provided.
+
 void inputSeatingArrangement(void) {
     char isValid;
     do {
@@ -179,14 +179,14 @@ void inputSeatingArrangement(void) {
         }
     } while (!isValid);
 }
-/**
-    @brief Calculates the row and column for a given seat index.
-    Given a seat index and the number of columns, this function calculates the corresponding row and column values.
-    The row and column values are updated through pointer parameters.
-    @param seatIndex The seat index for which to calculate the row and column.
-    @param row [out] Pointer to the variable that will hold the calculated row value.
-    @param col [out] Pointer to the variable that will hold the calculated column value.
-    */
+
+/// @brief Calculates the row and column for a given seat index.
+/// Given a seat index and the number of columns, this function calculates the corresponding row and column values.
+/// The row and column values are updated through pointer parameters.
+/// @param seatIndex The seat index for which to calculate the row and column.
+/// @param row [out] Pointer to the variable that will hold the calculated row value.
+/// @param col [out] Pointer to the variable that will hold the calculated column value.
+
 void calcRowsCols(unsigned int seatIndex, unsigned int *row, unsigned int *col) {
     *col = seatIndex % cols + 1;
     if (!*col) {
@@ -212,14 +212,13 @@ void displayMenu() {
     printf("Enter your choice: ");
 }
 
-/**
-    @brief Generates the seating arrangement of a classroom.
-    This function generates the seating arrangement for a classroom based on the specified rows and columns.
-    The seating arrangement pattern is determined by the global variable 'seatingArrangement', which can be
-    SAFE, FAR_SPACED, or CHESSBOARD.
-    @param Classroom A pointer to the classroom structure that will hold the seating arrangement.
-    @return The number of safe seats in the generated seating arrangement.
-    */
+/// @brief Generates the seating arrangement of a classroom.
+/// This function generates the seating arrangement for a classroom based on the specified rows and columns.
+/// The seating arrangement pattern is determined by the global variable 'seatingArrangement', which can be
+/// SAFE, FAR_SPACED, or CHESSBOARD.
+/// @param Classroom A pointer to the classroom structure that will hold the seating arrangement.
+/// @return The number of safe seats in the generated seating arrangement.
+
 unsigned short generateSeatingArrangement(classroom *Classroom) {
     unsigned short maxStudents = 0;
     for (int i = 0; i < rows; ++i) {
@@ -237,16 +236,16 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
     return maxStudents;
 }
 
-/**
-    @brief Logs the events of options 2, 3, 6.
-    This function logs various events related to seat assignments, such as assigning a student to a seat,
-    removing a student from a seat, and saving a student's surroundings.
-    @param seatIndex The index of the student's seat (0 is the first seat).
-    @param enteredString The student ID.
-    @param assignmentStatus The status of the assignment ('e' for assigned student, 'r' for removed student, 's' for saved student).
-    @param row The row of the student's seat (1 is the first row).
-    @param col The column of the student's seat (1 is the first column).
-    */
+
+/// @brief Logs the events of options 2, 3, 6.
+/// This function logs various events related to seat assignments, such as assigning a student to a seat,
+/// removing a student from a seat, and saving a student's surroundings.
+/// @param seatIndex The index of the student's seat (0 is the first seat).
+/// @param enteredString The student ID.
+/// @param assignmentStatus The status of the assignment ('e' for assigned student, 'r' for removed student, 's' for saved student).
+/// @param row The row of the student's seat (1 is the first row).
+/// @param col The column of the student's seat (1 is the first column).
+
 void logFileSeatAssignment(unsigned int seatIndex, char *enteredString, char assignmentStatus,
                            unsigned int row, unsigned int col) {
     time_t rawTime;
@@ -286,16 +285,16 @@ void logFileSeatAssignment(unsigned int seatIndex, char *enteredString, char ass
     fclose(file);
 }
 
-/**
-    @brief Assigns a student to a seat in the classroom.
-    This function assigns a student to a specified seat in the classroom.
-    @param Classroom A pointer to the classroom's memory address.
-    @param newStudent The student's 8-digit ID.
-    @param seatNumber The seat's index (0 is the first seat).
-    @param row The seat's row (1 is the first row).
-    @param col The seat's column (1 is the first column).
-    @param currentStudents A pointer to the variable storing the amount of currently assigned students.
-    */
+
+/// @brief Assigns a student to a seat in the classroom.
+/// This function assigns a student to a specified seat in the classroom.
+/// @param Classroom A pointer to the classroom's memory address
+/// @param newStudent The student's 8-digit ID.
+/// @param seatNumber The seat's index (0 is the first seat).
+/// @param row The seat's row (1 is the first row).
+/// @param col The seat's column (1 is the first column).
+/// @param currentStudents A pointer to the variable storing the amount of currently assigned students.
+
 void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
                 unsigned int row, unsigned int col, unsigned short *currentStudents) {
     char wasItSuccessful = classroomAssignStudent(Classroom,
@@ -315,11 +314,11 @@ void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
 
 /// Gets the row, column and index of a specific student's seat in the classroom.
 /// To store the row and column, pointers are used.
-/// \param Classroom the classroom's memory address
-/// \param searchedStudent the student's 8-digit ID
-/// \param row the seat's row (1 is the first row)
-/// \param col the seat's column (1 is the first column)
-/// \return the seat's index (0 is the first seat)
+/// @param Classroom the classroom's memory address
+/// @param searchedStudent the student's 8-digit ID
+/// @param row the seat's row (1 is the first row)
+/// @param col the seat's column (1 is the first column)
+/// @return the seat's index (0 is the first seat)
 unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
                             unsigned int *row, unsigned int *col) {
     unsigned int seatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
@@ -327,15 +326,15 @@ unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
     return seatIndex;
 }
 
-/**
-    @brief Prints the surroundings of a specific student in the classroom.
-    This function prints the surroundings of a specific student in the classroom,
-    including their direct or indirect neighbors, depending on the neighborhood type.
-    @param Classroom A pointer to the classroom's memory address.
-    @param searchedStudent The student's 8-digit ID.
-    @param neighborhoodType The type of neighborhood to include in the output (1: only direct neighbors, 2: direct and indirect neighbors).
-    @param filePath The file path where the output will be stored.
-    */
+
+/// @brief Prints the surroundings of a specific student in the classroom.
+/// This function prints the surroundings of a specific student in the classroom,
+/// including their direct or indirect neighbors, depending on the neighborhood type.
+/// @param Classroom A pointer to the classroom's memory address.
+/// @param searchedStudent The student's 8-digit ID.
+/// @param neighborhoodType The type of neighborhood to include in the output (1: only direct neighbors, 2: direct and indirect neighbors).
+/// @param filePath The file path where the output will be stored.
+
 void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoodType, char *filePath) {
     unsigned int row, col;
     unsigned int seatIndex = getSeatDetails(Classroom, searchedStudent, &row, &col);
@@ -346,13 +345,12 @@ void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoo
     classroomPrintPartial(Classroom, rows, cols, row, col, neighborhoodType, filePath);
 }
 
-/**
-    @brief Removes a student from the classroom.
-    This function removes a specific student from the classroom based on their 8-digit ID.
-    @param Classroom A pointer to the classroom's memory address.
-    @param studentToRemove The student's 8-digit ID.
-    @param countOfCurrentStudents A pointer to the variable storing the amount of currently assigned students.
-    */
+/// @brief Removes a student from the classroom.
+/// This function removes a specific student from the classroom based on their 8-digit ID.
+/// @param Classroom A pointer to the classroom's memory address.
+/// @param studentToRemove The student's 8-digit ID.
+/// @param countOfCurrentStudents A pointer to the variable storing the amount of currently assigned students.
+
 
 void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *countOfCurrentStudents) {
     unsigned int row, col;
@@ -377,15 +375,12 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
 
 #ifndef TEST
 /// Here starts the program.
+/// @brief The main function of the program.
+/// This function is the entry point of the program. It provides a menu-based interfacefor interacting with the classroom and performing various operations such as generating
+/// a seating chart, assigning seats to students, saving student surroundings, finding
+/// direct and indirect neighbors, removing students, and managing log paths.
+/// @return The exit status of the program.
 
-/**
-    @brief The main function of the program.
-    This function is the entry point of the program. It provides a menu-based interface
-    for interacting with the classroom and performing various operations such as generating
-    a seating chart, assigning seats to students, saving student surroundings, finding
-    direct and indirect neighbors, removing students, and managing log paths.
-    @return The exit status of the program.
-    */
 int main() {
     classroom *Classroom = classroomCreate();
     int option = -1;
