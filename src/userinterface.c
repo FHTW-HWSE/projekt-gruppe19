@@ -19,6 +19,7 @@
 
 #define ERROR "An error occurred.\n"
 #define CURRENT_TIME "Current local time and date: %s"
+#define INVALID "Invalid option. Choose again.\n"
 
 #define CASE_GENERATE 1
 #define CASE_ASSIGN 2
@@ -326,7 +327,7 @@ int main() {
     do {
         displayMenu();
         scanf("%d", &option);
-        clearStdinBuffer();
+        int buffered = clearStdinBuffer();
 
         if (!strcmp(log_path, "") && option != 7) {
             printf("Please enter a logfile path first at option 7.\n");
@@ -338,6 +339,10 @@ int main() {
         }
         if (!currentStudents && option != 1 && option != 2 && option != 7) {
             printf("Please add a student first at option 2.\n");
+            continue;
+        }
+        if (buffered) {
+            printf(INVALID);
             continue;
         }
 
@@ -468,7 +473,7 @@ int main() {
                 printf("Program is exiting.\n");
                 break;
             default:
-                printf("Invalid option. Choose again.\n");
+                printf(INVALID);
         }
     } while (option != CASE_EXIT);
 
