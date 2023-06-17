@@ -34,7 +34,7 @@
 unsigned int rows = 0;
 unsigned int cols = 0;
 char seatingArrangement;
-char logPath[201];
+char logPath[195];
 char opt1[] = "Generate seating arrangement";
 
 //-----FUNCTIONS-----//
@@ -122,7 +122,7 @@ void inputFilePath(char *path) {
     do {
         printf("Please enter a valid file path. "
                "If it doesn't exist yet, it will be created.\n");
-        scanf("%200s", path);
+        scanf("%194s", path);
         countOfBufferedCharacters = clearStdinBuffer();
         if (!countOfBufferedCharacters) {
             file = fopen(path, "a");
@@ -376,6 +376,18 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
     }
 }
 
+char inputYesOrNo(char *request) {
+    printf("%sy - yes; n - no: ", request);
+
+    char answer;
+    do {
+        scanf("%c", &answer);
+        clearStdinBuffer();
+    } while (answer != 'y' && answer != 'n');
+
+    return answer;
+}
+
 void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
     if (!rows) {
         rows = inputNumbers("Please enter the number of rows.",
@@ -384,12 +396,41 @@ void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
                             MAX_COLS, 1);
         inputSeatingArrangement();
 
+        unsigned short maxStudentsToAssign;
+        unsigned short productOfRC = rows * cols;
+        switch (seatingArrangement) {
+            case 's':
+                maxStudentsToAssign = productOfRC;
+                break;
+            case 'f':
+                maxStudentsToAssign = productOfRC / 4 + (rows & 1) + (cols & 1);
+                break;
+            case 'c':
+            default:
+                maxStudentsToAssign = productOfRC / 2 + (productOfRC & 1);
+                break;
+        }
+
+        char request[91];
+        snprintf(request, 90,
+                 "The amount of currently assignable students will be %d. Would you like to go with this?\n",
+                 maxStudentsToAssign);
+        char wantToKeepClassroom = inputYesOrNo(request);
+
+        if (wantToKeepClassroom == 'n') {
+            rows = 0;
+            cols = 0;
+            printf("Actions reverted. You can input new dimensions by selecting option 1 again.\n");
+            return;
+        }
+
         *maxStudents = generateSeatingArrangement(Classroom);
+
         printf("Seats arranged.\n");
         strcpy(opt1, "Print seating chart");
     }
     classroomPrintWhole(Classroom, rows, cols, logPath);
-    printf("Chart printed.\n");
+    printf("Chart printed.\nIf you would like to create a new one, please exit and restart the program.\n");
 }
 
 void caseAssign(classroom *Classroom, unsigned short *countOfCurrentStudents, unsigned short maxStudents) {
@@ -420,7 +461,6 @@ void caseAssign(classroom *Classroom, unsigned short *countOfCurrentStudents, un
     } while (seatNumber == -1);
 
     assignSeat(Classroom, newStudent, seatNumber, row, col, countOfCurrentStudents);
-
 }
 
 void caseSave(classroom *Classroom) {
@@ -434,7 +474,7 @@ void caseSave(classroom *Classroom) {
         return;
     }
 
-    char filePath[201];
+    char filePath[195];
 
     inputFilePath(filePath);
 
@@ -472,14 +512,9 @@ void caseRemove(classroom *Classroom, unsigned short *countOfCurrentStudents) {
 
 void caseLogPath(void) {
     if (strcmp(logPath, "")) {
-        printf("Current path: %s\nDo you want to change the path?"
-               " (y - yes; n - no): ", logPath);
-
-        char wantNewPath;
-        do {
-            scanf("%c", &wantNewPath);
-            clearStdinBuffer();
-        } while (wantNewPath != 'y' && wantNewPath != 'n');
+        char request[245];
+        snprintf(request, 244, "Current path: %s\nWould you like to change the path?\n", logPath);
+        char wantNewPath = inputYesOrNo(request);
 
         if (wantNewPath == 'n') {
             printf("The path remains: %s\n", logPath);
@@ -531,6 +566,11 @@ int main() {
             printf(INVALID);
             continue;
         }
+        if (!Classroom) {
+            printf("Classroom can't be created! Terminating program...");
+            option = 0;
+            continue;
+        }
 
         switch (option) {
             case CASE_GENERATE: {
@@ -573,4 +613,5 @@ int main() {
 
     return 0;
 }
+
 #endif
