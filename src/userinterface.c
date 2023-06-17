@@ -19,7 +19,7 @@
 
 #define ERROR "An error occurred.\n"
 #define CURRENT_TIME "Current local time and date: %s"
-#define INVALID "Invalid option. Choose again.\n"
+#define INVALID "Invalid input! "
 
 #define CASE_GENERATE 1
 #define CASE_ASSIGN 2
@@ -56,7 +56,7 @@ int clearStdinBuffer() {
 }
 
 
-/// @brief Asks the user to input a number within the specified range.
+/// @brief Asks the user to enter a number within the specified range.
 /// @param msgOnRequest The message displayed when requesting the input.
 /// @param upperLimit The maximum allowed number.
 /// @param lowerLimit The minimum allowed number.
@@ -64,12 +64,19 @@ int clearStdinBuffer() {
 
 int inputNumbers(char *msgOnRequest, unsigned int upperLimit, unsigned int lowerLimit) {
     int enteredNumber;
+    char isValid;
+
+    printf("%s ", msgOnRequest);
     do {
-        printf("%s The minimum number to enter is %d, the maximum is %d.\n",
-               msgOnRequest, lowerLimit, upperLimit);
+        printf("The minimum number to enter is %d, the maximum is %d.\n",
+               lowerLimit, upperLimit);
         scanf("%d", &enteredNumber);
         clearStdinBuffer();
-    } while (enteredNumber > upperLimit || enteredNumber < lowerLimit);
+        isValid = enteredNumber < upperLimit && enteredNumber > lowerLimit;
+        if (!isValid) {
+            printf(INVALID);
+        }
+    } while (!isValid);
 
     return enteredNumber;
 }
@@ -86,9 +93,11 @@ int inputNumbers(char *msgOnRequest, unsigned int upperLimit, unsigned int lower
 char inputStudentID(classroom *Classroom, char *newStudent, char *msgOnRequest,
                     char *msgOnFound, char *msgOnNotFound) {
     char isValid;
+
+    printf("%s ", msgOnRequest);
     do {
-        printf("%s The student ID must be eight characters long"
-               " and can only contain lowercase characters and numbers.\n", msgOnRequest);
+        printf("The student ID must be exactly eight characters long"
+               " and can only contain lowercase characters and numbers.\n");
         scanf("%8s", newStudent);
         int countOfBufferedCharacters = clearStdinBuffer();
         for (int i = 0; i < 8; ++i) {
@@ -96,6 +105,7 @@ char inputStudentID(classroom *Classroom, char *newStudent, char *msgOnRequest,
             isValid = ((currentChar >= '0' && currentChar <= '9')
                        || (currentChar >= 'a' && currentChar <= 'z')) && !countOfBufferedCharacters;
             if (!isValid) {
+                printf(INVALID);
                 break;
             }
         }
@@ -119,15 +129,21 @@ char inputStudentID(classroom *Classroom, char *newStudent, char *msgOnRequest,
 void inputFilePath(char *path) {
     FILE *file = NULL;
     int countOfBufferedCharacters;
+    char isValid;
+
+    printf("Please enter a valid file path. If it doesn't exist yet, it will be created. ");
     do {
-        printf("Please enter a valid file path. "
-               "If it doesn't exist yet, it will be created.\n");
+        printf("It can't be longer than 194 characters and it must be accessible for the program.\n");
         scanf("%194s", path);
         countOfBufferedCharacters = clearStdinBuffer();
         if (!countOfBufferedCharacters) {
             file = fopen(path, "a");
         }
-    } while (!file || countOfBufferedCharacters);
+        isValid = file && !countOfBufferedCharacters;
+        if (!isValid) {
+            printf(INVALID);
+        }
+    } while (!isValid);
 
     if (!strcmp(logPath, path)) {
         time_t rawTime;
@@ -170,14 +186,17 @@ unsigned int calcSeat(unsigned int row, unsigned int col) {
 
 void inputSeatingArrangement(void) {
     char isValid;
+
+
+    printf("Please enter the arrangement pattern. ");
     do {
-        printf("Please enter the arrangement pattern (c - chessboard; f - far spaced; s - safe): ");
+        printf("It must be either s (- safe), c (- chessboard) or f (- far spaced).\n");
         scanf("%c", &seatingArrangement);
         int buffered = clearStdinBuffer();
         isValid = (seatingArrangement == FAR_SPACED || seatingArrangement == CHESSBOARD
                    || seatingArrangement == SAFE) && !buffered;
         if (!isValid) {
-            printf("You can't enter anything but s, c or f!\n");
+            printf(INVALID);
         }
     } while (!isValid);
 }
@@ -376,14 +395,20 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
     }
 }
 
-char inputYesOrNo(char *request) {
-    printf("%sy - yes; n - no: ", request);
-
+char inputYesOrNo(char *msgOnRequest) {
+    printf("%s", msgOnRequest);
     char answer;
+
+    char isValid;
     do {
+        printf("y - yes, n - no:");
         scanf("%c", &answer);
         clearStdinBuffer();
-    } while (answer != 'y' && answer != 'n');
+        isValid = answer == 'y' || answer == 'n';
+        if(!isValid) {
+            printf(INVALID);
+        }
+    } while (!isValid);
 
     return answer;
 }
@@ -420,7 +445,8 @@ void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
         if (wantToKeepClassroom == 'n') {
             rows = 0;
             cols = 0;
-            printf("Actions reverted. You can input new dimensions by selecting option 1 again.\n");
+            seatingArrangement = 0;
+            printf("Actions reverted. You can enter new dimensions by selecting option 1 again.\n");
             return;
         }
 
@@ -563,7 +589,7 @@ int main() {
             continue;
         }
         if (countOfBufferedCharacters) {
-            printf(INVALID);
+            printf(INVALID "Choose again.\n");
             continue;
         }
         if (!Classroom) {
@@ -607,7 +633,7 @@ int main() {
                 caseExit();
                 break;
             default:
-                printf(INVALID);
+                printf(INVALID "Choose again.\n");
         }
     } while (option != CASE_EXIT);
 
