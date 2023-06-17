@@ -140,7 +140,9 @@ void inputFilePath(char *path) {
                       "\nTime: %sNew logging session has been started!\n", asctime(timeInfo));
 
         printf("The path is now: %s\n", logPath);
+#ifndef TEST
         printf(CURRENT_TIME, asctime(timeInfo));
+#endif
     }
 
     fclose(file);
@@ -301,7 +303,9 @@ void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
         printf("Student %s has been assigned to seat %d (%d. row, %d. column).\n",
                newStudent, seatNumber,
                row, col);
+#ifndef TEST
         logFileSeatAssignment(seatNumber, newStudent, 'e', row, col);
+#endif
     } else if (wasItSuccessful == 0) {
         printf(ERROR);
     } else {
@@ -364,16 +368,139 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
         printf("Student %s has been removed from seat %d (%d. row, %d. column).\n",
                studentToRemove, seatIndex,
                row, col);
+#ifndef TEST
         logFileSeatAssignment(seatIndex, studentToRemove, 'r', row, col);
+#endif
     } else {
         printf(ERROR);
     }
 }
 
+void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
+    if (!rows) {
+        rows = inputNumbers("Please enter the number of rows.",
+                            MAX_ROWS, 1);
+        cols = inputNumbers("Please enter the number of columns.",
+                            MAX_COLS, 1);
+        inputSeatingArrangement();
+
+        *maxStudents = generateSeatingArrangement(Classroom);
+        printf("Seats arranged.\n");
+        strcpy(opt1, "Print seating chart");
+    }
+    classroomPrintWhole(Classroom, rows, cols, logPath);
+    printf("Chart printed.\n");
+}
+
+void caseAssign(classroom *Classroom, unsigned short *countOfCurrentStudents, unsigned short maxStudents) {
+    if (*countOfCurrentStudents == maxStudents) {
+        printf("Maximal assignable student count is reached.\n");
+        return;
+    }
+
+    char newStudent[9];
+    char inputResult = inputStudentID(Classroom, newStudent,
+                                      "Please enter the student ID you would like to assign.",
+                                      "The student is already assigned.\n", "");
+    if (inputResult != 1) {
+        return;
+    }
+
+    unsigned int row, col, seatNumber;
+
+    do {
+        row = inputNumbers("Please enter the seats row.",
+                           rows, 1);
+        col = inputNumbers("Please enter the seats column.",
+                           cols, 1);
+        seatNumber = calcSeat(row, col);
+        if (seatNumber == -1) {
+            printf("You can't assign a student here!\n");
+        }
+    } while (seatNumber == -1);
+
+    assignSeat(Classroom, newStudent, seatNumber, row, col, countOfCurrentStudents);
+
+}
+
+void caseSave(classroom *Classroom) {
+    char studentToSave[9];
+    char inputResult = inputStudentID(
+            Classroom,
+            studentToSave,
+            "Please enter the student ID you would like to query.",
+            "", "The student was not found.\n");
+    if (inputResult != -1) {
+        return;
+    }
+
+    char filePath[201];
+
+    inputFilePath(filePath);
+
+    findNeighbors(Classroom, studentToSave, 2, filePath);
+#ifndef TEST
+    logFileSeatAssignment(0, filePath, 's', 0, 0);
+#endif
+}
+
+void caseNeighbors(classroom *Classroom, char neighborhoodType) {
+    char studentToSearch[9];
+    char inputResult = inputStudentID(Classroom, studentToSearch,
+                                      "Please enter the students ID to be searched for.",
+                                      "", "The student was not found.\n");
+    if (inputResult != -1) {
+        return;
+    }
+
+    findNeighbors(Classroom, studentToSearch, neighborhoodType, logPath);
+}
+
+void caseRemove(classroom *Classroom, unsigned short *countOfCurrentStudents) {
+    char studentToRemove[9];
+    char inputResult = inputStudentID(
+            Classroom,
+            studentToRemove,
+            "Please enter the student ID you would like to remove.",
+            "", "The student was not found.\n");
+    if (inputResult != -1) {
+        return;
+    }
+
+    removeStudent(Classroom, studentToRemove, countOfCurrentStudents);
+}
+
+void caseLogPath(void) {
+    if (strcmp(logPath, "")) {
+        printf("Current path: %s\nDo you want to change the path?"
+               " (y - yes; n - no): ", logPath);
+
+        char wantNewPath;
+        do {
+            scanf("%c", &wantNewPath);
+            clearStdinBuffer();
+        } while (wantNewPath != 'y' && wantNewPath != 'n');
+
+        if (wantNewPath == 'n') {
+            printf("The path remains: %s\n", logPath);
+            return;
+        }
+
+        inputFilePath(logPath);
+        return;
+    }
+
+    inputFilePath(logPath);
+}
+
+void caseExit(void) {
+    printf("Program is exiting.\n");
+}
+
 #ifndef TEST
 /// Here starts the program.
 /// @brief The main function of the program.
-/// This function is the entry point of the program. It provides a menu-based interfacefor interacting with the classroom and performing various operations such as generating
+/// This function is the entry point of the program. It provides a menu-based interface for interacting with the classroom and performing various operations such as generating
 /// a seating chart, assigning seats to students, saving student surroundings, finding
 /// direct and indirect neighbors, removing students, and managing log paths.
 /// @return The exit status of the program.
@@ -407,139 +534,37 @@ int main() {
 
         switch (option) {
             case CASE_GENERATE: {
-                if (!rows) {
-                    rows = inputNumbers("Please enter the number of rows.",
-                                        MAX_ROWS, 1);
-                    cols = inputNumbers("Please enter the number of columns.",
-                                        MAX_COLS, 1);
-                    inputSeatingArrangement();
-
-                    maxStudents = generateSeatingArrangement(Classroom);
-                    printf("Seats arranged.\n");
-                    strcpy(opt1, "Print seating chart");
-                }
-                classroomPrintWhole(Classroom, rows, cols, logPath);
-                printf("Chart printed.\n");
+                caseGenerate(Classroom, &maxStudents);
                 break;
             }
             case CASE_ASSIGN: {
-                if (countOfCurrentStudents == maxStudents) {
-                    printf("Maximal assignable student count is reached.\n");
-                    break;
-                }
-
-                char newStudent[9];
-                char inputResult = inputStudentID(Classroom, newStudent,
-                                                  "Please enter the student ID you would like to assign.",
-                                                  "The student is already assigned.\n", "");
-                if (inputResult != 1) {
-                    break;
-                }
-
-                unsigned int row, col, seatNumber;
-
-                do {
-                    row = inputNumbers("Please enter the seats row.",
-                                       rows, 1);
-                    col = inputNumbers("Please enter the seats column.",
-                                       cols, 1);
-                    seatNumber = calcSeat(row, col);
-                    if (seatNumber == -1) {
-                        printf("You can't assign a student here!\n");
-                    }
-                } while (seatNumber == -1);
-
-                assignSeat(Classroom, newStudent, seatNumber, row, col, &countOfCurrentStudents);
-
+                caseAssign(Classroom, &countOfCurrentStudents, maxStudents);
                 break;
             }
             case CASE_SAVE: {
-                char studentToSave[9];
-                char inputResult = inputStudentID(
-                        Classroom,
-                        studentToSave,
-                        "Please enter the student ID you would like to query.",
-                        "", "The student was not found.\n");
-                if (inputResult != -1) {
-                    break;
-                }
-
-                char filePath[201];
-
-                inputFilePath(filePath);
-
-                findNeighbors(Classroom, studentToSave, 2, filePath);
-                logFileSeatAssignment(0, filePath, 's', 0, 0);
+                caseSave(Classroom);
                 break;
             }
             case CASE_DIRECT_NEIGHBORS: {
-                char studentToSearch[9];
-                char inputResult = inputStudentID(Classroom, studentToSearch,
-                                                  "Please enter the students ID to be searched for.",
-                                                  "", "The student was not found.\n");
-                if (inputResult != -1) {
-                    break;
-                }
-
-                findNeighbors(Classroom, studentToSearch, 1, logPath);
-
+                caseNeighbors(Classroom, 1);
                 break;
             }
             case CASE_INDIRECT_NEIGHBORS: {
-                char studentToSearch[9];
-                char inputResult = inputStudentID(Classroom, studentToSearch,
-                                                  "Please enter the students ID to be searched for.",
-                                                  "", "The student was not found.\n");
-                if (inputResult != -1) {
-                    break;
-                }
-
-                findNeighbors(Classroom, studentToSearch, 2, logPath);
-
+                caseNeighbors(Classroom, 2);
                 break;
             }
 
             case CASE_REMOVE: {
-                char studentToRemove[9];
-                char inputResult = inputStudentID(
-                        Classroom,
-                        studentToRemove,
-                        "Please enter the student ID you would like to remove.",
-                        "", "The student was not found.\n");
-                if (inputResult != -1) {
-                    break;
-                }
-
-                removeStudent(Classroom, studentToRemove, &countOfCurrentStudents);
-
+                caseRemove(Classroom, &countOfCurrentStudents);
                 break;
             }
 
             case CASE_LOG_PATH: {
-                if (strcmp(logPath, "")) {
-                    printf("Current path: %s\nDo you want to change the path?"
-                           " (y - yes; n - no): ", logPath);
-
-                    char wantNewPath;
-                    do {
-                        scanf("%c", &wantNewPath);
-                        clearStdinBuffer();
-                    } while (wantNewPath != 'y' && wantNewPath != 'n');
-
-                    if (wantNewPath == 'n') {
-                        printf("The path remains: %s\n", logPath);
-                        break;
-                    }
-
-                    inputFilePath(logPath);
-                    break;
-                }
-
-                inputFilePath(logPath);
+                caseLogPath();
                 break;
             }
             case CASE_EXIT:
-                printf("Program is exiting.\n");
+                caseExit();
                 break;
             default:
                 printf(INVALID);
