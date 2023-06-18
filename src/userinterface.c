@@ -181,10 +181,12 @@ short calcSeat(unsigned short row, unsigned short col) {
 }
 
 
-///     @brief Reads a character from stdin and saves it as the seating arrangement
+/// @brief Reads a character from stdin and saves it as the seating arrangement
 /// This function prompts the user to enter a character representing the seating arrangement pattern
-/// (SAFE, FAR_SPACED, or CHESSBOARD) and saves it in the global variable 'seatingArrangement'.
+/// (UNSAFE, FAR_SPACED, or CHESSBOARD) and saves it in the global variable 'seatingArrangement'.
 /// It continues to prompt until a valid input is provided.
+/// @param countOfOptions The number of possible patterns for the given number of the students taking the exam
+/// can be 1, 2, 3
 
 void inputSeatingArrangement(unsigned char countOfOptions) {
     char isValid;
@@ -241,6 +243,7 @@ void calcRowsCols(unsigned short seatIndex, unsigned short *row, unsigned short 
 }
 
 /// Displays the main menu.
+
 void displayMenu() {
     printf("\nMenu:\n");
     printf("1. %s\n", opt1);
@@ -257,7 +260,7 @@ void displayMenu() {
 /// @brief Generates the seating arrangement of a classroom.
 /// This function generates the seating arrangement for a classroom based on the specified rows and columns.
 /// The seating arrangement pattern is determined by the global variable 'seatingArrangement', which can be
-/// SAFE, FAR_SPACED, or CHESSBOARD.
+/// UNSAFE, FAR_SPACED, or CHESSBOARD.
 /// @param Classroom A pointer to the classroom structure that will hold the seating arrangement.
 /// @return The number of safe seats in the generated seating arrangement.
 
@@ -363,6 +366,7 @@ void assignSeat(classroom *Classroom, char *newStudent, unsigned short seatNumbe
 /// @param row the seat's row (1 is the first row)
 /// @param col the seat's column (1 is the first column)
 /// @return the seat's index (0 is the first seat)
+
 short getSeatDetails(classroom *Classroom, char *searchedStudent,
                      unsigned short *row, unsigned short *col) {
     short seatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
@@ -395,7 +399,6 @@ void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoo
 /// @param studentToRemove The student's 8-digit ID.
 /// @param countOfCurrentStudents A pointer to the variable storing the amount of currently assigned students.
 
-
 void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *countOfCurrentStudents) {
     unsigned short row, col;
     short seatIndex = getSeatDetails(Classroom, studentToRemove, &row, &col);
@@ -419,6 +422,9 @@ void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *
     }
 }
 
+/// @brief Accepts y for yes or n for no.
+/// @param msgOnRequest The question to ask for the y/n with
+
 char inputYesOrNo(char *msgOnRequest) {
     printf("%s", msgOnRequest);
     char answer;
@@ -436,6 +442,10 @@ char inputYesOrNo(char *msgOnRequest) {
 
     return answer;
 }
+
+/// @brief The menu option of generating a seating arrangement (or printing one)
+/// @param Classroom The classroom's memory address
+/// @param maxStudents the variable's address storing the number of the maximum assignable students
 
 void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
     if (!rows) {
@@ -485,6 +495,11 @@ void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
     printf("Chart printed.\nIf you would like to create a new one, please exit and restart the program.\n");
 }
 
+/// @brief The menu option of assigning a student
+/// @param Classroom the classroom's memory address
+/// @param maxStudents the number of the maximum assignable students
+/// @param countOfCurrentStudents the memory address of the variable storing the number of already assigned students
+
 void caseAssign(classroom *Classroom, unsigned short *countOfCurrentStudents, unsigned short maxStudents) {
     if (*countOfCurrentStudents == maxStudents) {
         printf("Maximal assignable student count is reached.\n");
@@ -516,6 +531,9 @@ void caseAssign(classroom *Classroom, unsigned short *countOfCurrentStudents, un
     assignSeat(Classroom, newStudent, seatNumber, row, col, countOfCurrentStudents);
 }
 
+/// @brief The menu option of saving a student's surroundings to a specified file
+/// @param Classroom the classroom's memory address
+
 void caseSave(classroom *Classroom) {
     char studentToSave[9];
     char inputResult = inputStudentID(
@@ -537,6 +555,10 @@ void caseSave(classroom *Classroom) {
 #endif
 }
 
+/// @brief The menu option of finding a student and their surroundings in the classroom
+/// @param Classroom the classroom's memory address
+/// @param neighborhoodType 1 - direct neighbors, 2 - indirect neighbors too
+
 void caseNeighbors(classroom *Classroom, char neighborhoodType) {
     char studentToSearch[9];
     char inputResult = inputStudentID(Classroom, studentToSearch,
@@ -548,6 +570,10 @@ void caseNeighbors(classroom *Classroom, char neighborhoodType) {
 
     findNeighbors(Classroom, studentToSearch, neighborhoodType, logPath);
 }
+
+/// @brief The menu option of removing a student from the classroom
+/// @param Classroom the classroom's memory address
+/// @param countOfCurrentStudents the memory address of the variable storing the number of currently assigned students
 
 void caseRemove(classroom *Classroom, unsigned short *countOfCurrentStudents) {
     char studentToRemove[9];
@@ -562,6 +588,8 @@ void caseRemove(classroom *Classroom, unsigned short *countOfCurrentStudents) {
 
     removeStudent(Classroom, studentToRemove, countOfCurrentStudents);
 }
+
+/// @brief The menu option of viewing and modifying the logfile path
 
 void caseLogPath(void) {
     if (strcmp(logPath, "")) {
@@ -580,6 +608,8 @@ void caseLogPath(void) {
 
     inputFilePath(logPath);
 }
+
+/// @brief The menu option of exiting the program
 
 void caseExit(void) {
     printf("Program is exiting.\n");

@@ -84,6 +84,7 @@ void classroomAppendLastSeat(classroom *myClassroom, char *newStudent) {
 /// @param myClassroom the classroom's memory address
 /// @param searchedStudent the student's 8-digit ID
 /// @return the index of the seat (0 is the first seat's index), or -1 when failed
+
 short classroomSearchStudOrd(classroom *myClassroom, char *searchedStudent) {
     seat *searchSeat = (seat *) malloc(sizeof(seat));
     //allocate disk space for the stepping seat
@@ -306,6 +307,7 @@ char classroomCheckStudent(classroom *myClassroom, char *myStudent) {
 
 /// Deletes classroom.
 /// @param myClassroom the classroom's memory address
+
 void classroomDelete(classroom *myClassroom) {
     if (!myClassroom) {
         return;
