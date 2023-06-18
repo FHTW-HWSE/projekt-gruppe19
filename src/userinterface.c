@@ -15,11 +15,13 @@
 #define MAX_COLS 20
 #define CHESSBOARD 'c'
 #define FAR_SPACED 'f'
-#define SAFE 's'
+#define UNSAFE 'u'
 
 #define ERROR "An error occurred.\n"
 #define CURRENT_TIME "Current local time and date: %s"
 #define INVALID "Invalid input! "
+#define SELECTED "The selected seating pattern is the "
+#define SATURATION " with the room saturation of "
 
 #define CASE_GENERATE 1
 #define CASE_ASSIGN 2
@@ -62,17 +64,17 @@ int clearStdinBuffer() {
 /// @param lowerLimit The minimum allowed number.
 /// @return The entered number.
 
-int inputNumbers(char *msgOnRequest, unsigned int upperLimit, unsigned int lowerLimit) {
-    int enteredNumber;
+int inputIntegerNumbers(char *msgOnRequest, unsigned int upperLimit, unsigned int lowerLimit) {
+    float enteredNumber;
     char isValid;
 
     printf("%s ", msgOnRequest);
     do {
-        printf("The minimum number to enter is %d, the maximum is %d.\n",
+        printf("The minimum number to enter is %d, the maximum is %d. The number must be an integer.\n",
                lowerLimit, upperLimit);
-        scanf("%d", &enteredNumber);
+        scanf("%f", &enteredNumber);
         clearStdinBuffer();
-        isValid = enteredNumber < upperLimit && enteredNumber > lowerLimit;
+        isValid = enteredNumber <= upperLimit && enteredNumber >= lowerLimit && enteredNumber == (int) enteredNumber;
         if (!isValid) {
             printf(INVALID);
         }
@@ -173,7 +175,7 @@ void inputFilePath(char *path) {
 unsigned int calcSeat(unsigned int row, unsigned int col) {
     unsigned int seatIndex = (row - 1) * cols + col - 1;
     if ((seatingArrangement == FAR_SPACED && row & 1 && col & 1)
-        || (seatingArrangement == CHESSBOARD && !((row + col) & 1)) || seatingArrangement == SAFE)
+        || (seatingArrangement == CHESSBOARD && !((row + col) & 1)) || seatingArrangement == UNSAFE)
         return seatIndex;
     return -1;
 }
@@ -184,21 +186,46 @@ unsigned int calcSeat(unsigned int row, unsigned int col) {
 /// (SAFE, FAR_SPACED, or CHESSBOARD) and saves it in the global variable 'seatingArrangement'.
 /// It continues to prompt until a valid input is provided.
 
-void inputSeatingArrangement(void) {
+void inputSeatingArrangement(unsigned char countOfOptions) {
     char isValid;
 
-
+    if (countOfOptions == 1) {
+        seatingArrangement = UNSAFE;
+        printf(SELECTED "unsafe" SATURATION "100 %.\n");
+        return;
+    }
     printf("Please enter the arrangement pattern. ");
     do {
-        printf("It must be either s (- safe), c (- chessboard) or f (- far spaced).\n");
+        printf("It must be %c (unsafe)", UNSAFE);
+        if(countOfOptions == 2) {
+            printf(" or %c (chessboard).\n", CHESSBOARD);
+        }
+        if(countOfOptions > 2) {
+            printf(", %c (chessboard) or %c (far spaced).\n", CHESSBOARD, FAR_SPACED);
+        }
         scanf("%c", &seatingArrangement);
         int buffered = clearStdinBuffer();
-        isValid = (seatingArrangement == FAR_SPACED || seatingArrangement == CHESSBOARD
-                   || seatingArrangement == SAFE) && !buffered;
+        if(countOfOptions == 2) {
+            isValid = (seatingArrangement == UNSAFE || seatingArrangement == CHESSBOARD) && !buffered;
+        }
+        else {
+            isValid = (seatingArrangement == UNSAFE || seatingArrangement == CHESSBOARD
+                    || seatingArrangement == FAR_SPACED) && !buffered;
+        }
         if (!isValid) {
             printf(INVALID);
         }
     } while (!isValid);
+
+    if(seatingArrangement == UNSAFE) {
+        printf(SELECTED "unsafe" SATURATION "100 %.\n");
+    }
+    else if(seatingArrangement == CHESSBOARD) {
+        printf(SELECTED "chessboard" SATURATION "50 %.\n");
+    }
+    else {
+        printf(SELECTED "far spaced" SATURATION "25 %.\n");
+    }
 }
 
 /// @brief Calculates the row and column for a given seat index.
@@ -241,7 +268,7 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
     unsigned short maxStudents = 0;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if (seatingArrangement == SAFE || (seatingArrangement == CHESSBOARD && !((i + j) & 1))
+            if (seatingArrangement == UNSAFE || (seatingArrangement == CHESSBOARD && !((i + j) & 1))
                 || (seatingArrangement == FAR_SPACED && !(i & 1) && !(j & 1))) {
                 classroomAppendLastSeat(Classroom, "########");
                 maxStudents++;
@@ -401,7 +428,7 @@ char inputYesOrNo(char *msgOnRequest) {
 
     char isValid;
     do {
-        printf("y - yes, n - no:");
+        printf("y - yes, n - no: ");
         scanf("%c", &answer);
         clearStdinBuffer();
         isValid = answer == 'y' || answer == 'n';
@@ -415,41 +442,43 @@ char inputYesOrNo(char *msgOnRequest) {
 
 void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
     if (!rows) {
-        rows = inputNumbers("Please enter the number of rows.",
-                            MAX_ROWS, 1);
-        cols = inputNumbers("Please enter the number of columns.",
-                            MAX_COLS, 1);
-        inputSeatingArrangement();
+        rows = inputIntegerNumbers("Please enter the number of rows.",
+                                   MAX_ROWS, 1);
+        cols = inputIntegerNumbers("Please enter the number of columns.",
+                                   MAX_COLS, 1);
 
-        unsigned short maxStudentsToAssign;
         unsigned short productOfRC = rows * cols;
-        switch (seatingArrangement) {
-            case 's':
-                maxStudentsToAssign = productOfRC;
-                break;
-            case 'f':
-                maxStudentsToAssign = productOfRC / 4 + (rows & 1) + (cols & 1);
-                break;
-            case 'c':
-            default:
-                maxStudentsToAssign = productOfRC / 2 + (productOfRC & 1);
-                break;
+        unsigned short countOfStudentsToAssign = inputIntegerNumbers("Please enter the count of students "
+                                                                   "taking the exam.", productOfRC,
+                                                                   1);
+
+        unsigned char countOfOptions = 1;
+        if (countOfStudentsToAssign <= (productOfRC / 2 + (productOfRC & 1))) {
+            countOfOptions++;
+        }
+        if (countOfStudentsToAssign <= (rows / 2 + (rows & 1)) * (cols / 2 + (cols & 1))) {
+            countOfOptions++;
         }
 
-        char request[91];
-        snprintf(request, 90,
-                 "The amount of currently assignable students will be %d. Would you like to go with this?\n",
-                 maxStudentsToAssign);
-        char wantToKeepClassroom = inputYesOrNo(request);
+        printf("With the given number of the students taking the exam (%d), the possible seating patterns "
+               "are the following:\n- unsafe (100 % room saturation)\n", countOfStudentsToAssign);
+        if(countOfOptions >= 2) {
+            printf("- chessboard (50 % room saturation)\n");
+        }
+        if(countOfOptions == 3) {
+            printf("- far spaced (25 % room saturation)\n");
+        }
+        char msgOnRequest[] = "Would you like to continue?\n";
+        char wantToKeepClassroom = inputYesOrNo(msgOnRequest);
 
         if (wantToKeepClassroom == 'n') {
             rows = 0;
             cols = 0;
-            seatingArrangement = 0;
             printf("Actions reverted. You can enter new dimensions by selecting option 1 again.\n");
             return;
         }
 
+        inputSeatingArrangement(countOfOptions);
         *maxStudents = generateSeatingArrangement(Classroom);
 
         printf("Seats arranged.\n");
@@ -476,10 +505,10 @@ void caseAssign(classroom *Classroom, unsigned short *countOfCurrentStudents, un
     unsigned int row, col, seatNumber;
 
     do {
-        row = inputNumbers("Please enter the seats row.",
-                           rows, 1);
-        col = inputNumbers("Please enter the seats column.",
-                           cols, 1);
+        row = inputIntegerNumbers("Please enter the seats row.",
+                                  rows, 1);
+        col = inputIntegerNumbers("Please enter the seats column.",
+                                  cols, 1);
         seatNumber = calcSeat(row, col);
         if (seatNumber == -1) {
             printf("You can't assign a student here!\n");
