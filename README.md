@@ -47,7 +47,7 @@ Sommersemester 2023
 
 # User stories and acceptance criteria
 
-## **User Story: Generating seating chart**
+## **User story: Generating seating chart**
 
 As a professor, I want to be able to input the dimensions of the classroom and select a seating arrangement pattern, so that I can generate
 a seating chart that ensures social distancing.
@@ -57,7 +57,7 @@ a seating chart that ensures social distancing.
 - TEST CASE: Input of classroom dimensions
   - GIVEN: there should be an element in the user interface that receives data about the classroom
   - WHEN: the professor enters the room's count of rows and columns (correct values: [1:20], integer)
-  - THEN: the program stores the data and proceeds to the input of the amount of examinated students
+  - THEN: the program stores the data and proceeds to the input of the number of students taking the exam
 
 - TEST CASE: Incorrect values for dimension
   - GIVEN: the professor should be only able to enter positive numbers ([1:20], integer)
@@ -66,7 +66,7 @@ a seating chart that ensures social distancing.
 
 - TEST CASE: Input of the count of students
   - GIVEN: the professor must be able to ensure that the students taking the exam will fit in the classroom
-  - WHEN: the professor specifies a positive integer as the count of examinated students, after entering valid values for the classroom's dimensions
+  - WHEN: the professor specifies a positive integer as the count of number of students taking the exam, after entering valid values for the classroom's dimensions
   - THEN: the program stores it and searches options to arrange the students in the room with the given dimensions
 
 - TEST CASE: No half students accepted
@@ -74,45 +74,22 @@ a seating chart that ensures social distancing.
   - WHEN: something else is received from the professor as the count of students
   - THEN: the program gives back an error message, specifying the problem and the domain of valid numbers and waits for the professor to enter a new value
 
-- TEST CASE: Displaying the seating arrangement pattern
+- TEST CASE: Seating arrangement pattern
+  - GIVEN: the seating arrangement pattern must be selected (u - unsafe, c - chessboard, f - far spaced)
+  - WHEN: the professor enters the selected possible seating arrangement pattern
+  - THEN: the program saves it and takes that into account when it generates the seating chart
+
+- TEST CASE: Invalid pattern
+  - GIVEN: the professor should not be able to select a non-existing pattern, or one that would make the given number of students not fit
+  - WHEN: the professor enters a non-existing or unusable pattern
+  - THEN: the program displays and error message and asks for a valid pattern
+
+- TEST CASE: Displaying the seating arrangement
   - GIVEN: the program should show how the earlier selected seating arrangement pattern would look like in reality in the classroom
-  - WHEN: the seating arrangement pattern is generated in the program
+  - WHEN: the seating arrangement is generated in the program
   - THEN: the program displays the seating chart generated from the given count of rows and columns and based on the selected seating arrangement pattern
 
-## **User Story: Indirect neighbours**
-
-As a professor, I want to be able to view a list of all indirect neighbors of a particular student.
-
-
-### Test cases:
-
-- TEST CASE: Displaying the indirect neighbours
-  - GIVEN: the professor must be able to query the indirect neighbours of a specific student
-  - WHEN: the professor enters a student ID existing in the current exam's database
-  - THEN: the program gives back the list of the specified student's indirect neighbours
-
-- TEST CASE: Student not found
-  - GIVEN: the program should handle if information the indirect neighbours of a non-examinated students are queried
-  - WHEN: the professor enters a student name or ID not existing in the current exam's database
-  - THEN: the program gives back and error message
-
-## **User Story: Direct neighbours**
-
-As a professor, I want to be able to view a list of all direct neighbors of a particular student.
-
-### Test cases:
-
-- TEST CASE: Neighbors are checkable
-  - GIVEN: a Professor wants to see the direct neighbors of a student
-  - WHEN: the Student ID is entered into the system
-  - THEN: a list of direct neighbors is put out
-
-- TEST CASE: Student not found
-  - GIVEN: the program should handle if information the indirect neighbours of a non-examinated students are queried
-  - WHEN: the professor enters a student name or ID not existing in the current exam's database
-  - THEN: the program gives back and error message
-
-## **User Story: Seat Assignment**
+## **User story: Seat assignment**
 
 As a professor, I want to be able to assign a specific seat for every student.
 
@@ -133,14 +110,46 @@ As a professor, I want to be able to assign a specific seat for every student.
   - WHEN: the assigned student ID is entered
   - THEN: an error message will be put out
 
-## **User Story: Social distancing**
+## **User story: Social distancing**
 
 As a professor, I want to ensure that the social distancing regulations are taken into account when assigning a seat.
 
 ### Test cases:
 
-- TEST CASE: Social distacing norms upheld
+- TEST CASE: Social distancing norms upheld
 
   - GIVEN: the professor can't assign a seat in a full classroom
   - WHEN: the professor wants to assign a seat, but the room is already full
   - THEN: an error message will be put out informing the professor that new people cannot be added
+
+## **User story: Direct neighbours**
+
+As a professor, I want to be able to view a list of all direct neighbors of a particular student.
+
+### Test cases:
+
+- TEST CASE: Neighbors are checkable
+  - GIVEN: a Professor wants to see the direct neighbors of a student
+  - WHEN: the Student ID is entered into the system
+  - THEN: a list of direct neighbors is put out
+
+- TEST CASE: Student not found
+  - GIVEN: the program should handle if information the indirect neighbours of a non-assigned students are queried
+  - WHEN: the professor enters a student name or ID not existing in the current exam's database
+  - THEN: the program gives back and error message
+
+## **User story: Indirect neighbours**
+
+As a professor, I want to be able to view a list of all indirect neighbors of a particular student.
+
+### Test cases:
+
+- TEST CASE: Displaying the indirect neighbours
+  - GIVEN: the professor must be able to query the indirect neighbours of a specific student
+  - WHEN: the professor enters a student ID existing in the current exam's database
+  - THEN: the program gives back the list of the specified student's indirect neighbours
+
+- TEST CASE: Student not found
+  - GIVEN: the program should handle if information the indirect neighbours of a non-assigned students are queried
+  - WHEN: the professor enters a student name or ID not existing in the current exam's database
+  - THEN: the program gives back and error message
