@@ -118,17 +118,17 @@ As a professor, I want to be able to assign a specific seat for every student.
 
 ### Test cases:
 
-- Test Case: Seat assignment
+- TEST CASE: Seat assignment
   - GIVEN: a professor wants to assign an available seat to a student that is not yet assigned
   - WHEN: the non-assigned student ID and the available seat's row and column are entered
   - THEN: a seat is assigned
 
-- Test Case: Unavailable seat
+- TEST CASE: Unavailable seat
   - GIVEN: a professor wants to assign an unavailable seat to a student that is not yet assigned
   - WHEN: the non-assigned student ID and the unavailable seat's row and column are entered
   - THEN: an error message will be put out
 
-- Test Case: Student ID already assigned
+- TEST CASE: Student ID already assigned
   - GIVEN: a professor wants to assign a seat to a student that is already assigned
   - WHEN: the assigned student ID is entered
   - THEN: an error message will be put out
@@ -137,7 +137,9 @@ As a professor, I want to be able to assign a specific seat for every student.
 
 As a professor, I want to ensure that the social distancing regulations are taken into account when assigning a seat.
 
-- Test Case: Social distacing norms upheld
+### Test cases:
+
+- TEST CASE: Social distacing norms upheld
   - GIVEN: the professor can't assign a seat in a full classroom
   - WHEN: the professor wants to assign a seat, but the room is already full
   - THEN: an error message will be put out informing the professor that new people cannot be added
