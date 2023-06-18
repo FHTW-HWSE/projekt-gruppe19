@@ -140,6 +140,7 @@ As a professor, I want to ensure that the social distancing regulations are take
 ### Test cases:
 
 - TEST CASE: Social distacing norms upheld
+
   - GIVEN: the professor can't assign a seat in a full classroom
   - WHEN: the professor wants to assign a seat, but the room is already full
   - THEN: an error message will be put out informing the professor that new people cannot be added
