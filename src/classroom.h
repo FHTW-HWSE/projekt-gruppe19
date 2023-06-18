@@ -48,7 +48,7 @@ typedef struct classroom {              //classroom (the chain of the linked lis
 /// @return The memory address of the created classroom, or 0 if failed
 classroom *classroomCreate(void) {
     classroom *newClassroom = (classroom *) malloc(sizeof(classroom));
-                    //allocate disk space for the classroom
+    //allocate disk space for the classroom
     if (!newClassroom) {
         return 0;    //return 0 when failed (newClassroom is null pointer)
     }
@@ -80,33 +80,13 @@ void classroomAppendLastSeat(classroom *myClassroom, char *newStudent) {
     myClassroom->lastSeat = newSeat;                                //make the newly added seat the last one
 }
 
-/// Searches for a specific student's seat's address in the memory. Stayed here for debugging.
-/// @param myClassroom the classroom's memory address
-/// @param searchedStudent the student's 8-digit ID
-/// @return the seat's memory address, or 0 when failed
-
-seat *classroomSearchStudAddr(classroom *myClassroom, char *searchedStudent) {
-    seat *searchSeat = (seat *) malloc(sizeof(seat));                   //allocate disk space for the stepping seat
-    if (!searchSeat) {
-        return 0;                           //return 0 when failed (searchSeat is null pointer)
-    }
-
-    searchSeat = myClassroom->firstSeat;    //start the search with the classroom's first seat
-    while (searchSeat && strcmp(searchSeat->student, searchedStudent)) {     //while there are seats
-        //and the student wasn't found...
-        searchSeat = searchSeat->nextSeat;  //step to the next seat
-    }
-
-    return searchSeat;                      //returns the searched seat's memory address
-}
-
 /// Searches for a specific student's seat's number in the memory.
 /// @param myClassroom the classroom's memory address
 /// @param searchedStudent the student's 8-digit ID
 /// @return the index of the seat (0 is the first seat's index), or -1 when failed
- unsigned int classroomSearchStudOrd(classroom *myClassroom, char *searchedStudent) {
+unsigned int classroomSearchStudOrd(classroom *myClassroom, char *searchedStudent) {
     seat *searchSeat = (seat *) malloc(sizeof(seat));
-                                            //allocate disk space for the stepping seat
+    //allocate disk space for the stepping seat
     if (!searchSeat) {
         return -1;                          //return -1 when failed (searchSeat is null pointer)
     }
@@ -121,44 +101,6 @@ seat *classroomSearchStudAddr(classroom *myClassroom, char *searchedStudent) {
     return ord;                             //return the seat's index
 }
 
-
-/// Searches for a specific seat number's address in the memory. Stayed here for debugging.
-/// @param myClassroom the classroom's memory address
-/// @param searchedOrd the student's 8-digit ID
-/// @return the seat's address, or 0 when failed
-seat *classroomSearchOrdAddr(classroom *myClassroom, unsigned int searchedOrd) {
-    seat *searchSeat = (seat *) malloc(sizeof(seat));
-                                            //allocate disk space for the stepping seat
-    if (!searchSeat) {
-        return 0;                           //return 0 when failed (searchSeat is null pointer)
-    }
-    searchSeat = myClassroom->firstSeat;    //start the search with the classroom's first seat
-    while (searchSeat && searchedOrd) {     //while there are seats and the seat index wasn't found...
-        searchSeat = searchSeat->nextSeat;  //step to the next seat
-        searchedOrd--;                      //also decrement the index counter
-    }
-
-    return searchSeat;                      //return the seat's memory address
-}
-
-/// Searches for a specific seat's student in the memory. Stayed here for debugging.
-/// @param myClassroom the classroom's memory address
-/// @param searchedOrd the student's seat's index (0 is the first seat's index)
-/// @return the student's 8-digit ID, or 0 when failed
-char *classroomSearchOrdStud(classroom *myClassroom, unsigned int searchedOrd) {
-    seat *searchSeat = (seat *) malloc(sizeof(seat));
-                                            //allocate disk space for the stepping seat
-    if (!searchSeat) {
-        return 0;                           //return 0 when failed (searchSeat is null pointer)
-    }
-    searchSeat = myClassroom->firstSeat;    //start the search with the classroom's first seat
-    while (searchSeat && searchedOrd) {     //while there are seats and the seat index wasn't found...
-        searchSeat = searchSeat->nextSeat;  //step to the next seat
-        searchedOrd--;                      //also decrement the index counter
-    }
-    return searchSeat->student;             //return the student ID
-}
-
 /// Lists all the students in the classroom.
 /// @param myClassroom the classroom's memory address
 /// @param rows the count of rows of the classroom
@@ -167,7 +109,7 @@ char *classroomSearchOrdStud(classroom *myClassroom, unsigned int searchedOrd) {
 
 void classroomPrintWhole(classroom *myClassroom, unsigned int rows, unsigned int cols, char *path) {
     seat *searchSeat = (seat *) malloc(sizeof(seat));
-                                //allocate disk space for the stepping seat
+    //allocate disk space for the stepping seat
     if (!searchSeat) {          //if failed (searchSeat is null pointer)...
         printf(ERROR);   //print the default error message to the stdout
         return;                 //exit the function
@@ -250,12 +192,13 @@ void classroomPrintPartial(classroom *myClassroom, unsigned int rows, unsigned i
     searchSeat = myClassroom->firstSeat;                       //start the search with the classroom's first seat
 
     printf("The surroundings of the queried student:\n---front---\n");
-                                                               //print the classroom board to the stdout
+    //print the classroom board to the stdout
     fprintf(file, "\nTime: %sSurroundings of the searched student:\n", asctime(timeInfo));
 
     for (int i = 0; i < rows; i++) {                           //iterate through the rows
         for (int j = 0; j < cols; ++j) {                       //iterate through the columns
-if (i >= rowIndex - nT && i <= rowIndex + nT                   //if the current student is the searched student
+            if (i >= rowIndex - nT &&
+                i <= rowIndex + nT                   //if the current student is the searched student
                 && j >= colIndex - nT && j <= colIndex + nT) {             //or its direct/indirect neighbor...
                 printf("%s ", searchSeat->student);                 //print the current student ID to stdout
                 fprintf(file, "%s ", searchSeat->student);   //print the current student ID to file
@@ -264,13 +207,13 @@ if (i >= rowIndex - nT && i <= rowIndex + nT                   //if the current 
         }
         if (i >= rowIndex - nT && i <= rowIndex + nT) {        //print the column number
             printf("%d\n", i + 1);
-            fprintf(file,"%d\n", i + 1);
+            fprintf(file, "%d\n", i + 1);
         }
     }                                                          //in the end of the line
     for (int j = 0; j < cols; j++) {                           //print the row numbers
         if (j >= colIndex - nT && j <= colIndex + nT) {        //in the end
             printf("%2d       ", j + 1);
-            fprintf(file,"%2d       ", j + 1);
+            fprintf(file, "%2d       ", j + 1);
         }
     }
     printf("\n");                                       //insert new line
@@ -292,7 +235,7 @@ if (i >= rowIndex - nT && i <= rowIndex + nT                   //if the current 
 /// @param seatNumber the student's seat's index (0 is the first seat's index)
 /// @return 1 when succeeded, 0 in case of a memory allocation error, or -1 when the seat is occupied
 
- char classroomAssignStudent(classroom *myClassroom, char *newStudent, unsigned int seatNumber) {
+char classroomAssignStudent(classroom *myClassroom, char *newStudent, unsigned int seatNumber) {
     seat *searchSeat = (seat *) malloc(sizeof(seat));   //allocate disk space for the stepping seat
     if (!searchSeat) {
         return 0;                                           //return 0 when failed (searchSeat is null pointer)
@@ -324,7 +267,7 @@ char classroomRemoveStudent(classroom *myClassroom, unsigned int seatNumber) {
 /// @param myStudent the student's 8-digit ID
 /// @return returns -1 when student was found, 1 when was not found, or 0 in case of memory allocation error
 
- char classroomCheckStudent(classroom *myClassroom, char *myStudent) {
+char classroomCheckStudent(classroom *myClassroom, char *myStudent) {
     seat *searchSeat = (seat *) malloc(sizeof(seat));       //allocate disk space for the stepping seat
     if (!searchSeat) {
         return 0;                                               //return 0 when failed (searchSeat is null pointer)

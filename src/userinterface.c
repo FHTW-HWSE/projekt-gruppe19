@@ -197,33 +197,30 @@ void inputSeatingArrangement(unsigned char countOfOptions) {
     printf("Please enter the arrangement pattern. ");
     do {
         printf("It must be %c (unsafe)", UNSAFE);
-        if(countOfOptions == 2) {
+        if (countOfOptions == 2) {
             printf(" or %c (chessboard).\n", CHESSBOARD);
         }
-        if(countOfOptions > 2) {
+        if (countOfOptions > 2) {
             printf(", %c (chessboard) or %c (far spaced).\n", CHESSBOARD, FAR_SPACED);
         }
         scanf("%c", &seatingArrangement);
         int buffered = clearStdinBuffer();
-        if(countOfOptions == 2) {
+        if (countOfOptions == 2) {
             isValid = (seatingArrangement == UNSAFE || seatingArrangement == CHESSBOARD) && !buffered;
-        }
-        else {
+        } else {
             isValid = (seatingArrangement == UNSAFE || seatingArrangement == CHESSBOARD
-                    || seatingArrangement == FAR_SPACED) && !buffered;
+                       || seatingArrangement == FAR_SPACED) && !buffered;
         }
         if (!isValid) {
             printf(INVALID);
         }
     } while (!isValid);
 
-    if(seatingArrangement == UNSAFE) {
+    if (seatingArrangement == UNSAFE) {
         printf(SELECTED "unsafe" SATURATION "100 %.\n");
-    }
-    else if(seatingArrangement == CHESSBOARD) {
+    } else if (seatingArrangement == CHESSBOARD) {
         printf(SELECTED "chessboard" SATURATION "50 %.\n");
-    }
-    else {
+    } else {
         printf(SELECTED "far spaced" SATURATION "25 %.\n");
     }
 }
@@ -432,7 +429,7 @@ char inputYesOrNo(char *msgOnRequest) {
         scanf("%c", &answer);
         clearStdinBuffer();
         isValid = answer == 'y' || answer == 'n';
-        if(!isValid) {
+        if (!isValid) {
             printf(INVALID);
         }
     } while (!isValid);
@@ -449,8 +446,8 @@ void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
 
         unsigned short productOfRC = rows * cols;
         unsigned short countOfStudentsToAssign = inputIntegerNumbers("Please enter the count of students "
-                                                                   "taking the exam.", productOfRC,
-                                                                   1);
+                                                                     "taking the exam.", productOfRC,
+                                                                     1);
 
         unsigned char countOfOptions = 1;
         if (countOfStudentsToAssign <= (productOfRC / 2 + (productOfRC & 1))) {
@@ -462,10 +459,10 @@ void caseGenerate(classroom *Classroom, unsigned short *maxStudents) {
 
         printf("With the given number of the students taking the exam (%d), the possible seating patterns "
                "are the following:\n- unsafe (100 % room saturation)\n", countOfStudentsToAssign);
-        if(countOfOptions >= 2) {
+        if (countOfOptions >= 2) {
             printf("- chessboard (50 % room saturation)\n");
         }
-        if(countOfOptions == 3) {
+        if (countOfOptions == 3) {
             printf("- far spaced (25 % room saturation)\n");
         }
         char msgOnRequest[] = "Would you like to continue?\n";
