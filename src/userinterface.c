@@ -33,8 +33,8 @@
 #define CASE_EXIT 0
 
 //-----GLOBAL VARIABLES-----//
-unsigned int rows = 0;
-unsigned int cols = 0;
+unsigned short rows = 0;
+unsigned short cols = 0;
 char seatingArrangement;
 char logPath[195];
 char opt1[] = "Generate seating arrangement";
@@ -172,8 +172,8 @@ void inputFilePath(char *path) {
 /// @param col The column of the seat (1 is the first column).
 /// @return The seat index.
 
-unsigned int calcSeat(unsigned int row, unsigned int col) {
-    unsigned int seatIndex = (row - 1) * cols + col - 1;
+short calcSeat(unsigned short row, unsigned short col) {
+    short seatIndex = (row - 1) * cols + col - 1;
     if ((seatingArrangement == FAR_SPACED && row & 1 && col & 1)
         || (seatingArrangement == CHESSBOARD && !((row + col) & 1)) || seatingArrangement == UNSAFE)
         return seatIndex;
@@ -232,7 +232,7 @@ void inputSeatingArrangement(unsigned char countOfOptions) {
 /// @param row [out] Pointer to the variable that will hold the calculated row value.
 /// @param col [out] Pointer to the variable that will hold the calculated column value.
 
-void calcRowsCols(unsigned int seatIndex, unsigned int *row, unsigned int *col) {
+void calcRowsCols(unsigned short seatIndex, unsigned short *row, unsigned short *col) {
     *col = seatIndex % cols + 1;
     if (!*col) {
         *col += cols - 1;
@@ -288,8 +288,8 @@ unsigned short generateSeatingArrangement(classroom *Classroom) {
 /// @param row The row of the student's seat (1 is the first row).
 /// @param col The column of the student's seat (1 is the first column).
 
-void logFileSeatAssignment(unsigned int seatIndex, char *enteredString, char assignmentStatus,
-                           unsigned int row, unsigned int col) {
+void logFileSeatAssignment(unsigned short seatIndex, char *enteredString, char assignmentStatus,
+                           unsigned short row, unsigned short col) {
     time_t rawTime;
     struct tm *timeInfo;
 
@@ -337,8 +337,8 @@ void logFileSeatAssignment(unsigned int seatIndex, char *enteredString, char ass
 /// @param col The seat's column (1 is the first column).
 /// @param currentStudents A pointer to the variable storing the amount of currently assigned students.
 
-void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
-                unsigned int row, unsigned int col, unsigned short *currentStudents) {
+void assignSeat(classroom *Classroom, char *newStudent, unsigned short seatNumber,
+                unsigned short row, unsigned short col, unsigned short *currentStudents) {
     char wasItSuccessful = classroomAssignStudent(Classroom,
                                                   newStudent, seatNumber);
     if (wasItSuccessful == 1) {
@@ -363,9 +363,9 @@ void assignSeat(classroom *Classroom, char *newStudent, unsigned int seatNumber,
 /// @param row the seat's row (1 is the first row)
 /// @param col the seat's column (1 is the first column)
 /// @return the seat's index (0 is the first seat)
-unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
-                            unsigned int *row, unsigned int *col) {
-    unsigned int seatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
+short getSeatDetails(classroom *Classroom, char *searchedStudent,
+                     unsigned short *row, unsigned short *col) {
+    short seatIndex = classroomSearchStudOrd(Classroom, searchedStudent);
     calcRowsCols(seatIndex, row, col);
     return seatIndex;
 }
@@ -380,8 +380,8 @@ unsigned int getSeatDetails(classroom *Classroom, char *searchedStudent,
 /// @param filePath The file path where the output will be stored.
 
 void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoodType, char *filePath) {
-    unsigned int row, col;
-    unsigned int seatIndex = getSeatDetails(Classroom, searchedStudent, &row, &col);
+    unsigned short row, col;
+    short seatIndex = getSeatDetails(Classroom, searchedStudent, &row, &col);
     if (seatIndex == -1) {
         printf(ERROR);
         return;
@@ -397,8 +397,8 @@ void findNeighbors(classroom *Classroom, char *searchedStudent, char neighborhoo
 
 
 void removeStudent(classroom *Classroom, char *studentToRemove, unsigned short *countOfCurrentStudents) {
-    unsigned int row, col;
-    unsigned int seatIndex = getSeatDetails(Classroom, studentToRemove, &row, &col);
+    unsigned short row, col;
+    short seatIndex = getSeatDetails(Classroom, studentToRemove, &row, &col);
     if (seatIndex == -1) {
         printf(ERROR);
         return;
@@ -499,7 +499,8 @@ void caseAssign(classroom *Classroom, unsigned short *countOfCurrentStudents, un
         return;
     }
 
-    unsigned int row, col, seatNumber;
+    unsigned short row, col;
+    short seatNumber;
 
     do {
         row = inputIntegerNumbers("Please enter the seats row.",

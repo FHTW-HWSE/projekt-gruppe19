@@ -149,7 +149,7 @@ As a professor, I want to be able to view a list of all indirect neighbors of a 
   - WHEN: the professor enters a student ID existing in the current exam's database
   - THEN: the program gives back the list of the specified student's indirect neighbours
 
-- TEST CASE: Student not found
+- TEST CASE: Student not found 2
   - GIVEN: the program should handle if information the indirect neighbours of a non-assigned students are queried
   - WHEN: the professor enters a student name or ID not existing in the current exam's database
   - THEN: the program gives back and error message

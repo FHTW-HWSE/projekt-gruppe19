@@ -6,9 +6,9 @@ Execute the following command on a Linux shell:
   `gcc userinterface.c classroom.h -o seatingplan`
 
 
-To run the tests you need to include the main.c from the same folder.
+To run the tests you need to compile the test.c from the same folder.
 
- `gcc userinterface.c main.c classroom.h -o seatingplan_test`
+ `gcc test.c userinterface.c classroom.h -o seatingplan_test`
 
 
 Execute the according programs in the terminal with:
